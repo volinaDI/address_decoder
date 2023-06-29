@@ -1,5 +1,13 @@
 require: slotfilling/slotFilling.sc
   module = sys.zb-common
+  
+require: patterns.sc
+  module = sys.zb-common
+require: address/address.sc
+  module = sys.zb-common
+  
+require: patterns.sc
+require: stepByStep.sc
 theme: /
 
     state: Start
@@ -7,17 +15,12 @@ theme: /
         a: Начнём.
 
     state: Hello
-        intent!: /привет
+        q!: (привет/ku)
         a: Привет привет
-
-    state: Bye
-        intent!: /пока
-        a: Пока пока
+        go!: /StepByStep/AskRegion
+            
+    state: Chaotic
 
     state: NoMatch
         event!: noMatch
         a: Я не понял. Вы сказали: {{$request.query}}
-
-    state: Match
-        event!: match
-        a: {{$context.intent.answer}}
