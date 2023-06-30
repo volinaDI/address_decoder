@@ -45,7 +45,7 @@
     "priority" : 0
   } ],
   "entities" : [ ],
-  "enabledSystemEntities" : [ "duckling.number", "duckling.time", "duckling.duration", "duckling.phone-number", "duckling.email", "duckling.url" ],
+  "enabledSystemEntities" : [ "pymorphy.geox", "duckling.number", "duckling.time", "duckling.duration", "duckling.phone-number", "duckling.email", "duckling.url", "zb.number" ],
   "spellerDictionary" : [ ],
   "systemEntities" : [ {
     "name" : "mystem.geo",
@@ -88,7 +88,7 @@
     "enabled" : false
   }, {
     "name" : "pymorphy.geox",
-    "enabled" : false
+    "enabled" : true
   }, {
     "name" : "pymorphy.orgn",
     "enabled" : false
@@ -148,7 +148,7 @@
     "enabled" : false
   }, {
     "name" : "zb.number",
-    "enabled" : false
+    "enabled" : true
   } ],
   "faq" : [ ],
   "skills" : [ ]

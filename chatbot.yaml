@@ -9,6 +9,12 @@ tests:
   include:
     - test.xml
 
+injector:
+    dadata:
+        url: "https://cleaner.dadata.ru/api/v1/clean/address"
+        token: "08e331ab4a76a826065d3d280b704af23c7999ba"
+        secretKey: "af02d6ef2befe14b84a74bf743f181a69ac534fa"
+
 nlp:
   intentNoMatchThresholds:
     phrases: 0.2

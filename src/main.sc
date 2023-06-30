@@ -8,19 +8,34 @@ require: address/address.sc
   
 require: patterns.sc
 require: stepByStep.sc
+
+require: functions.js
 theme: /
 
     state: Start
         q!: $regex</start>
-        a: Начнём.
+        a: Здравствуйте, попробуете назвать адрес в хаотичном порядке?
+        q: * $yes * || toState = "/SuperChaotic"
+        q: * $no * || toState = "/StepByStep"
+            
 
     state: Hello
         q!: (привет/ku)
         a: Привет привет
         go!: /StepByStep/AskRegion
             
-    state: Chaotic
+    state: SuperChaotic
+        q!: (арбуз/ch/ср)
+        a: Какой адрес вас интересует?
+        
+        state: GetAddress
+            q: *
+            a: {{toPrettyString(getFullAddress($request.query))}}
 
     state: NoMatch
         event!: noMatch
         a: Я не понял. Вы сказали: {{$request.query}}
+
+    state: TMP
+        q!: tmp
+        a: {{$injector.dadata.url}}
