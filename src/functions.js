@@ -28,17 +28,25 @@ function getResponseYandex(text) {
 
 function parseYandexRes(obj) {
     if (obj && obj.GeoObjectCollection 
-      && obj.GeoObjectCollection.GeocoderResponseMetaData
-      && obj.GeoObjectCollection.GeocoderResponseMetaData.found === 0) {
+      && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData
+      && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found === 0) {
         return false;
     }
     if (obj && obj.GeoObjectCollection 
-      && obj.GeoObjectCollection.GeocoderResponseMetaData
-      && obj.GeoObjectCollection.GeocoderResponseMetaData.featureMember) {
-        return obj.GeoObjectCollection.GeocoderResponseMetaData.featureMember;
+      && obj.GeoObjectCollection.featureMember) {
+        return obj.GeoObjectCollection.featureMember;
     }
 }
 
 function formatQueryYandex(text) {
     return text.replace(/\s/g, "+");
+}
+
+function replaceFromDict(text, dict) {
+    var res = text;
+    var wordsToReplace = _.keys(dict);
+    wordsToReplace.forEach(function(wordToReplace) {
+        res = res.replace(wordToReplace, dict[wordToReplace]);
+    })
+    return res;
 }

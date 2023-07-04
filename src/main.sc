@@ -9,6 +9,10 @@ require: address/address.sc
 require: patterns.sc
 require: stepByStep.sc
 
+require: replacesYandex.yaml
+  var = replacesYandex
+  name = replacesYandex
+
 require: functions.js
 theme: /
 
@@ -38,7 +42,8 @@ theme: /
             q: * ($two/яндекс) * : ya
             script: $client.api = $parseTree._Root;
             a: Хорошо, тестируем {{ $parseTree._Root === "dadata" ? "Дадата" : "Яндекс"}}
-        
+            go!: /AddressParsing/AskAddress
+            
         state: NoMatch
             a: Что тестируем, Дадата или Яндекс?
             go: /AskSelectAPI
@@ -50,10 +55,8 @@ theme: /
 
     state: TMP
         q!: tmp
-        script:
-            var text = "ыыыпыпы";
-            $temp.ans = toPrettyString(parseAddressYandex(text));
-        a: {{$temp.ans}}
+        a: {{replaceFromDict('3', replacesYandex)}}
+        
     
     state: Reset
         q!: reset
@@ -76,13 +79,27 @@ theme: /AddressParsing
         state: GetAdress
             q: *
             script:
+                $reactions.answer(toPrettyString($request));
                 var apiResponse = getResponseYandex($request.query);
-                if (apiResponse) var res = parseYandexRes(apiResponse);
+                if (apiResponse) {
+                    var res = parseYandexRes(apiResponse);
+                }
                 else $reactions.answer("Не удалось получить ответ сервиса");
-                $analytics.setComment(res);
-                
+                $analytics.setComment(toPrettyString(apiResponse));
                 if (res) {
                     if(res) $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                } else if ($request.query !== replaceFromDict($request.query, replacesYandex)) {
+                    var apiResponse = getResponseYandex(replaceFromDict($request.query, replacesYandex));
+                    if (apiResponse) {
+                        var res = parseYandexRes(apiResponse);
+                    }
+                    else $reactions.answer("Не удалось получить ответ сервиса");
+                    
+                    if (res) {
+                        if(res) $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                    }
+                    $reactions.answer("После замены получилось - " + );
+                    else $reactions.answer("Не нашлось такого адреса");
                 }
                 else $reactions.answer("Не нашлось такого адреса");
             go!: /AddressParsing/AskAddress
