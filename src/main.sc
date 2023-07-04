@@ -87,7 +87,7 @@ theme: /AddressParsing
                 else $reactions.answer("Не удалось получить ответ сервиса");
                 $analytics.setComment(toPrettyString(apiResponse));
                 if (res) {
-                    if(res) $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                    $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
                 } else if ($request.query !== replaceFromDict($request.query, replacesYandex)) {
                     var apiResponse = getResponseYandex(replaceFromDict($request.query, replacesYandex));
                     if (apiResponse) {
@@ -96,9 +96,9 @@ theme: /AddressParsing
                     else $reactions.answer("Не удалось получить ответ сервиса");
                     
                     if (res) {
-                        if(res) $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                        ans = res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted;
                     }
-                    $reactions.answer("После замены получилось - " + );
+                    $reactions.answer("После замены получилось - " + ans);
                     else $reactions.answer("Не нашлось такого адреса");
                 }
                 else $reactions.answer("Не нашлось такого адреса");
