@@ -1,7 +1,7 @@
 {
   "project" : {
-    "id" : "lt_834-249193521-olh",
-    "name" : "lt_834-249193521-olh",
+    "id" : "lt_834-1000025184-pfS",
+    "name" : "lt_834-1000025184-pfS",
     "folder" : "/platform"
   },
   "settings" : {
@@ -31,17 +31,7 @@
     "classificationRules" : {
       "refs" : [ ]
     },
-    "priority" : 0
-  }, {
-    "path" : "/привет",
-    "enabled" : true,
-    "shared" : false,
-    "phrases" : [ {
-      "text" : "привет"
-    } ],
-    "classificationRules" : {
-      "refs" : [ ]
-    },
+    "patterns" : [ "(~сброс/~сбросить)", "~настройка" ],
     "priority" : 0
   } ],
   "entities" : [ ],

@@ -10,11 +10,17 @@ tests:
     - test.xml
 
 injector:
-    dadata:
-        url: "https://cleaner.dadata.ru/api/v1/clean/address"
-        token: "08e331ab4a76a826065d3d280b704af23c7999ba"
-        secretKey: "af02d6ef2befe14b84a74bf743f181a69ac534fa"
-
+    
+  dadata:
+    url: "https://cleaner.dadata.ru/api/v1/clean/address"
+    token: "08e331ab4a76a826065d3d280b704af23c7999ba"
+    secret: "af02d6ef2befe14b84a74bf743f181a69ac534fa"
+    
+  yandex:
+    # url: https://geocode-maps.yandex.ru/1.x/?apikey=&geocode=мячей+Шарикоподшипниковская+улица&&format=json
+    url: "https://geocode-maps.yandex.ru/1.x/" # &&format=json
+    # ?apikey=&geocode=мячей+Шарикоподшипниковская+улица&&
+    token: "d5131d8b-6452-456c-847d-b31cef2d1680"
 nlp:
   intentNoMatchThresholds:
     phrases: 0.2
