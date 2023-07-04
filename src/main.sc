@@ -79,7 +79,6 @@ theme: /AddressParsing
         state: GetAdress
             q: *
             script:
-                $reactions.answer(toPrettyString($request));
                 var apiResponse = getResponseYandex($request.query);
                 if (apiResponse) {
                     var res = parseYandexRes(apiResponse);
