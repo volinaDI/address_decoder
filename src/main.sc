@@ -97,8 +97,8 @@ theme: /AddressParsing
                     
                     if (res) {
                         ans = res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted;
+                        $reactions.answer("После замены получилось - " + ans);
                     }
-                    $reactions.answer("После замены получилось - " + ans);
                     else $reactions.answer("Не нашлось такого адреса");
                 }
                 else $reactions.answer("Не нашлось такого адреса");
