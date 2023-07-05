@@ -12,7 +12,7 @@ function parseAddressDadata(text) {
         }
     );
     $analytics.setComment(toPrettyString(response));
-    return response;
+    if (response && response.data) return response.data[0];
 }
 
 // yandex
