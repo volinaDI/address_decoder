@@ -17,10 +17,17 @@ injector:
     secret: "af02d6ef2befe14b84a74bf743f181a69ac534fa"
     
   yandex:
-    # url: https://geocode-maps.yandex.ru/1.x/?apikey=&geocode=мячей+Шарикоподшипниковская+улица&&format=json
     url: "https://geocode-maps.yandex.ru/1.x/" # &&format=json
-    # ?apikey=&geocode=мячей+Шарикоподшипниковская+улица&&
     token: "d5131d8b-6452-456c-847d-b31cef2d1680"
+    
+  sheet2bot:
+    http: "https://sheet2bot.services.just-ai.com/api/"
+    sheetId: "1uze1q2_GOUCXCxsqNW-YJOIrtq5a5GRfJYlwWBNP5jg"
+    cellNextRow: "M1"
+  
+  ASRmodel:
+    1000025184-lt_834-1000025184-pfS-20942950142: yandex
+    1000025184-lt_834-1000025184-pfS-20942949797: tinkoff
 nlp:
   intentNoMatchThresholds:
     phrases: 0.2
