@@ -35,7 +35,7 @@ theme: /Dadata
         state: GetAddress
             q: *
             script: $temp.apiResponse = parseAddressDadata($request.query);
-            a: {{$temp.apiResponse.result ? $temp.apiResponse.result : Не нашлось такого адреса.}}
+            a: {{$temp.apiResponse.result ? $temp.apiResponse.result : "Не нашлось такого адреса."}}
             # if: !$temp.apiResponse
                 # a: Не удалось получить ответ сервиса.
         
