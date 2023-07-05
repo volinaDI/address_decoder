@@ -18,13 +18,10 @@ theme: /
 
     state: Start
         q!: $regex</start>
+        q!: * (привет/сначала) *
         if: !$client.api
             go!: /AskSelectAPI
         go!: /AddressParsing/AskAddress
-        # q: * $yes * || toState = "/SuperChaotic"
-        # q: * $no * || toState = "/StepByStep"
-        
-        
 
     state: SuperChaotic
         q!: (арбуз/ch/ср)
@@ -74,31 +71,30 @@ theme: /
 theme: /AddressParsing
     
     state: AskAddress
+        q: * $yes * ||fromState = "/AddressParsing/AskAddress/GetAddress"
         a: Назовите адрес
         
-        state: GetAdress
+        state: GetAddress
             q: *
-            script:
-                var apiResponse = getResponseYandex($request.query);
-                if (apiResponse) {
-                    var res = parseYandexRes(apiResponse);
-                }
-                else $reactions.answer("Не удалось получить ответ сервиса");
-                $analytics.setComment(toPrettyString(apiResponse));
-                if (res) {
-                    $reactions.answer(res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-                } else if ($request.query !== replaceFromDict($request.query, replacesYandex)) {
-                    var apiResponse = getResponseYandex(replaceFromDict($request.query, replacesYandex));
-                    if (apiResponse) {
-                        var res = parseYandexRes(apiResponse);
-                    }
-                    else $reactions.answer("Не удалось получить ответ сервиса");
-                    
-                    if (res) {
-                        ans = res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted;
-                        $reactions.answer("После замены получилось - " + ans);
-                    }
-                    else $reactions.answer("Не нашлось такого адреса");
-                }
-                else $reactions.answer("Не нашлось такого адреса");
-            go!: /AddressParsing/AskAddress
+            script: $temp.apiResponse = getResponseYandex($request.query);
+            if: !$temp.apiResponse
+                a: Не удалось получить ответ сервиса.
+            else:
+                script:
+                    $temp.res = parseYandexRes($temp.apiResponse);
+                    $session.query = $request.query;
+                    $analytics.setComment(toPrettyString($temp.apiResponse));
+                if: !$temp.res
+                    a: Не нашлось такого адреса.
+                    if: replaceFromDict($request.query, replacesYandex) != $request.query
+                        go!: AddressWithReplace
+                else:
+                    a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
+                    a: Это правильный ответ?
+
+            state: AddressWithReplace
+                q: * $no *
+                a: После замены получилось - {{replaceFromDict($session.query, replacesYandex)}}
+                go!: /AddressParsing/AskAddress
+
+            
