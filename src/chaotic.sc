@@ -24,8 +24,7 @@ theme: /Yandex
                         go!: AddressWithReplace
                 else:
                     script: addLineTable($request.query, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-                    a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
-                    a: Это правильный ответ?
+                    a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}} Это правильный ответ?
 
             state: AddressWithReplace
                 q: * $no *

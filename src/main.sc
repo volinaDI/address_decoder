@@ -31,7 +31,7 @@ theme: /
         
         state: GetAPI
             q: * ($one/[да] ~дата) * : dadata
-            q: * ($two/яндекс) * : ya
+            q: * ($two/яндекс) * : yandex
             script: $client.api = $parseTree._Root;
             a: Хорошо, тестируем {{ $parseTree._Root === "dadata" ? "Дадата" : "Яндекс"}}
             go!: /Start
