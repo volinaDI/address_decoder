@@ -17,7 +17,7 @@ require: functions.js
 theme: /
 
     state: Start
-        q!: $regex</start>
+        q!: start
         q!: * (привет/сначала/~начало) *
         if: !$client.api
             go!: /AskSelectAPI
@@ -30,7 +30,7 @@ theme: /
         a: Чтобы тестировать интеграцию Дадата скажите - дата. Чтобы попробовать Яндекс скажите - Яндекс.
         
         state: GetAPI
-            q: * ($one/[да] ~дата) * : dadata
+            q: * ($one/[да] ~дата/да да) * : dadata
             q: * ($two/яндекс) * : yandex
             script: $client.api = $parseTree._Root;
             a: Хорошо, тестируем {{ $parseTree._Root === "dadata" ? "Дадата" : "Яндекс"}}

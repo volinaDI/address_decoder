@@ -29,7 +29,7 @@ theme: /Yandex
             state: AddressWithReplace
                 q: * $no *
                 script:
-                    $temp.newQuery = replaceFromDict($session.query, replacesYandex);
+                    $temp.newQuery = replaceFromDict($session.query.toLowerCase(), replacesYandex);
                     $temp.apiResponse = getResponseYandex($temp.newQuery);
                 if: !$temp.apiResponse
                     a: Не удалось получить ответ сервиса.
