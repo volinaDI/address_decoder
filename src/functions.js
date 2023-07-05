@@ -80,8 +80,7 @@ function addLineTable(request, result) {
                 asr ? asr : "текстовый ввод",
                 $jsapi.context().client.api,
                 request,
-                // результат парсится на кусочки обоими API, индекс тоже выуживается, просто пока не дошли руки
-                result
+                result // результат парсится на кусочки обоими API, индекс тоже выуживается, просто пока не дошли руки
             ],
             "sheet": sheet2bot.sheetId
         },

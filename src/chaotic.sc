@@ -8,22 +8,22 @@ theme: /Yandex
             q: *
             script:
                 // если Тинькофф, надо пошаманить с числами
-                if ($injector.ASRmodel[$request.botId] === "tinkoff") $request.query = numeralsToNumbers($request.query);
-                $temp.apiResponse = getResponseYandex($request.query);
+                $session.query = $request.query;
+                if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
+                $temp.apiResponse = getResponseYandex($session.query);
             if: !$temp.apiResponse
                 a: Не удалось получить ответ сервиса.
             else:
                 script:
                     $temp.res = parseYandexRes($temp.apiResponse);
-                    $session.query = $request.query;
                     $analytics.setComment(toPrettyString($temp.apiResponse));
                 if: !$temp.res
                     a: Не нашлось такого адреса.
-                    script: addLineTable($request.text, "-");
-                    if: replaceFromDict($request.query, replacesYandex) != $request.query
+                    script: addLineTable($request.query, "-");
+                    if: replaceFromDict($session.query, replacesYandex) != $session.query
                         go!: AddressWithReplace
                 else:
-                    script: addLineTable($request.text, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                    script: addLineTable($request.query, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
                     a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
                     a: Это правильный ответ?
 
@@ -40,11 +40,12 @@ theme: /Yandex
                         $analytics.setComment(toPrettyString($temp.apiResponse));
                     if: !$temp.res
                         a: Не нашлось такого адреса.
-                        script: addLineTable($request.text, "-");
+                        script: addLineTable($session.query, "-");
                         go!: /Yandex/AskAddress
                     else:
                         script: addLineTable($temp.newQuery, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
                         a: После замены получилось - {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
+                script: delete $session.query;
                 go!: /Yandex/AskAddress
 
 theme: /Dadata
@@ -59,5 +60,5 @@ theme: /Dadata
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $request.query = numeralsToNumbers($request.query);
                 $temp.apiResponse = parseAddressDadata($request.query);
             a: {{$temp.apiResponse.result ? $temp.apiResponse.result : "Не нашлось такого адреса."}}
-            script: addLineTable($request.text, $temp.apiResponse.result ? $temp.apiResponse.result : "-");
+            script: addLineTable($request.query, $temp.apiResponse.result ? $temp.apiResponse.result : "-");
             go!: /Dadata/AskAddress

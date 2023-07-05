@@ -46,17 +46,7 @@ theme: /
 
     state: TMP
         q!: tmp
-        script:
-            addLineTable("шарикоподшипниковская улица дом шесть корпус два строение три", "г Москва, ул Шарикоподшипниковская");
-        #     $temp.text = "москва большой спасоглинищевский переулок дом четыре дробь два а";
-        #     var res = $caila.entitiesLookup($temp.text, true);
-        #     res.entities.forEach(function(elem) {
-        #         if (elem.entity === "zb.number") {
-        #             $temp.text = $temp.text.replace(elem.text, parseInt(elem.value))
-        #         }
-        #     })
-        #     $temp.text = $temp.text.replace("дробь", "/")
-        a: {{$injector.ASRmodel[$request.botId] ? true : false}}
+        a: s
 
     state: Reset
         q!: reset
