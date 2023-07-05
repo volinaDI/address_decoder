@@ -22,9 +22,12 @@ theme: /Yandex
                     script: addLineTable($request.query, "-");
                     if: replaceFromDict($session.query, replacesYandex) != $session.query
                         go!: AddressWithReplace
-                else:
+                elseif: $temp.res[0]
                     script: addLineTable($request.query, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
                     a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}} Это правильный ответ?
+                elseif: $temp.res.GeoObject
+                    script: addLineTable($request.query, $temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
+                    a: {{$temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}} Это правильный ответ?
 
             state: AddressWithReplace
                 q: * $no *
