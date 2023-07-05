@@ -18,7 +18,7 @@ theme: /
 
     state: Start
         q!: $regex</start>
-        q!: * (привет/сначала) *
+        q!: * (привет/сначала/~начало) *
         if: !$client.api
             go!: /AskSelectAPI
         if: $client.api === "yandex"
