@@ -24,10 +24,12 @@ theme: /Yandex
                         go!: AddressWithReplace
                 elseif: $temp.res[0]
                     script: addLineTable($request.query, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-                    a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}} Это правильный ответ?
+                    a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
+                    a: Это правильный ответ?
                 elseif: $temp.res.GeoObject
                     script: addLineTable($request.query, $temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-                    a: {{$temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}} Это правильный ответ?
+                    a: {{$temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
+                    a: Это правильный ответ?
 
             state: AddressWithReplace
                 q: * $no *
