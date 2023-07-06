@@ -80,4 +80,6 @@ theme: /
         state: Get
             q: *
             a: Вы сказали: {{$request.query}}
+            script: justAsr($request.query);
+            a: далее
             go: /TestRecognition

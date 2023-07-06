@@ -24,6 +24,7 @@ injector:
     http: "https://sheet2bot.services.just-ai.com/api/"
     sheetId: "1uze1q2_GOUCXCxsqNW-YJOIrtq5a5GRfJYlwWBNP5jg"
     cellNextRow: "M1"
+    sheetIdJustASR: "1xULMot90_KIZhAFYW4xmXCXUj-QY_RIG_UXEI66xnTc"
   
   ASRmodel:
     1000025184-lt_834-1000025184-pfS-20942950142: yandex

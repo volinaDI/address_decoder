@@ -115,3 +115,25 @@ function addLineTable(request, result) {
         headers: {"Content-Type": "application/json"}
         });
 }
+
+function justAsr(text) {
+    // какая у нас модель asr
+    var sheet2bot = $jsapi.context().injector.sheet2bot;
+    var asr = $jsapi.context().injector.ASRmodel[$jsapi.context().request.botId];
+    // первый пустой ряд в таблице
+    var urlRowNum = sheet2bot.http + "rows?sheet=" + sheet2bot.sheetIdJustASR + "&range=" + sheet2bot.cellNextRow;
+    var rowNum = Number($http.get(urlRowNum, {headers: {"Content-Type": "application/json"}}).data[0]);
+    // заполняем таблицу
+    var response = $http.post(sheet2bot.http + "update/", {
+        body: {
+            "range": "'just asr'!A",
+            "index": rowNum,
+            "values": [
+                asr ? asr : "текстовый ввод",
+                text
+            ],
+            "sheet": sheet2bot.sheetIdJustASR
+        },
+        headers: {"Content-Type": "application/json"}
+        });
+}
