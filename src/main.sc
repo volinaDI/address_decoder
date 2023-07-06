@@ -19,11 +19,11 @@ theme: /
     state: Start
         q!: start
         q!: * (привет/сначала/~начало) *
-        if: !$client.api
-            go!: /AskSelectAPI
-        if: $client.api === "yandex"
-            go!: /Yandex/AskAddress
-        a: Здравствуйте
+        script: $client.api = "dadata"
+        #     go!: /AskSelectAPI
+        # if: $client.api === "yandex"
+        #     go!: /Yandex/AskAddress
+        a: Здравствуйте.
         go!: /Dadata/AskAddress
 
     state: AskSelectAPI
@@ -43,7 +43,7 @@ theme: /
             
     state: NoMatch
         event!: noMatch
-        a: No match. Запрос пользователя: {{$request.query}}
+        a: No match. Вы говорите пользователя: {{$request.query}}
 
     state: TMP
         q!: tmp
@@ -52,6 +52,8 @@ theme: /
         state: TMP
             q: * $Address
             a: это адрес
+            a: {{toPrettyString($parseTree)}}
+            go!: /TMP
 
         state: NoMatch
             event: noMatch
@@ -71,3 +73,11 @@ theme: /
         script: $jsapi.stopSession();
         a: Новая сессия, ура
 
+    state: TestRecognition || modal = true
+        q!: * {(тест*/тестиров*) распозн*} *
+        a: Хорошо, тестируем распознавание. Говори, а я буду повторять.
+        
+        state: Get
+            q: *
+            a: Вы сказали: {{$request.query}}
+            go: /TestRecognition
