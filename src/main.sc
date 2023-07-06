@@ -24,7 +24,7 @@ theme: /
         # if: $client.api === "yandex"
         #     go!: /Yandex/AskAddress
         a: Здравствуйте.
-        go!: /Dadata/AskAddress
+        go!: /Address/Ask
 
     state: AskSelectAPI
         q!: [change/switch] api
