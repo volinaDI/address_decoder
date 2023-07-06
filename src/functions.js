@@ -102,7 +102,7 @@ function addLineTable(request, result) {
     // заполняем таблицу
     var response = $http.post(sheet2bot.http + "update/", {
         body: {
-            "range": "'Вольный формат'!A",
+            "range": "'dev'!A",
             "index": rowNum,
             "values": [
                 asr ? asr : "текстовый ввод",

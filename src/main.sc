@@ -5,6 +5,8 @@ require: patterns.sc
   module = sys.zb-common
 require: address/address.sc
   module = sys.zb-common
+require: city/city.sc
+  module = sys.zb-common
   
 require: chaotic.sc
 require: stepByStep.sc
