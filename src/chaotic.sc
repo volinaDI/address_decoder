@@ -12,7 +12,7 @@ theme: /Address
                 $session.query = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
-                var $temp.dadataOk = true;
+                $temp.dadataOk = true;
                 // dadata
                 $temp.dadataResponse = parseAddressDadata($session.query);
                 $temp.dadataRes = dadataParseResponse($temp.dadataResponse);
