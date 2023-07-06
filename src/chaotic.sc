@@ -6,23 +6,32 @@ theme: /Address
         a: Назовите адрес
         
         state: Get
-            q: * {[$addressCity] * ($addressStreet * $addressHome)} *
-            q: * {$addressCity * ($addressStreet * [$addressHome])} *
+            q: * {[$addressCity/$City] * ($addressStreet * $addressHome)} *
+            q: * {($addressCity/$City) * ($addressStreet * [$addressHome])} *
             script:
-                $session.query = $request.query;
+                $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "");
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
                 $temp.dadataOk = true;
                 // dadata
                 $temp.dadataResponse = parseAddressDadata($session.query);
-                $temp.dadataRes = dadataParseResponse($temp.dadataResponse);
-                // проверка страны на вменяемость
-                if (["Казахстан", "Россия"].indexOf($temp.dadataRes.country) === -1) $temp.dadataOk = false;
-                if (!$temp.dadataRes.street || !$temp.dadataRes.house) $temp.dadataOk = false;
-                addLineTable($request.query, $temp.dadataResponse.result);
-            a: {{$temp.dadataOk ? $temp.dadataResponse.result + "Это правильный ответ?" : "Извините, не могу найти адрес в базе данных. Вы сказали " + $session.query + "Верно?"}}
-            # a: Это правильный ответ?
-            
+            # dadata не отвечает
+            if: !$temp.dadataResponse
+                a: Произошла техническая ошибка. Нет доступа к базе данных
+                a: Перезвоните пожалуйста.
+                script: $response.replies.push({"type": "hangup"});
+            else: 
+                script:
+                    $temp.dadataRes = dadataParseResponse($temp.dadataResponse);
+                    // проверка страны на вменяемость
+                    if (["Казахстан", "Россия"].indexOf($temp.dadataRes.country) === -1) $temp.dadataOk = false;
+                    if (!$temp.dadataRes.street || !$temp.dadataRes.house) $temp.dadataOk = false;
+                    addLineTable($request.query, $temp.dadataResponse.result);
+                    # заполнение таблицы
+                    
+                    
+                a: {{$temp.dadataOk ? $temp.dadataResponse.result + ".Это правильный ответ?" : "Извините, не могу найти адрес в базе данных. Вы сказали " + $session.query + ". Верно?"}}
+
             state: No
                 q: * $no *
                 a: Очень жаль. Попробуем ещё раз?

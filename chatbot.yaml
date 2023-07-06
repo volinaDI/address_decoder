@@ -13,6 +13,7 @@ injector:
     
   dadata:
     url: "https://cleaner.dadata.ru/api/v1/clean/address"
+    # token: "f49ad190c4ef6b1d8eb89b6958ff5432cafec379"
     token: "f49ad190c4ef6b1d8eb89b6958ff5432cafec379"
     secret: "993b16a748ef70bcc4f9d24aaf381a74cfc75ec7"
     
