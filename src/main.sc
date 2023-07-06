@@ -80,7 +80,13 @@ theme: /
         state: Get
             q: *
             a: Записала ваш запрос: {{$request.query}}
-            script: justAsr($request.query);
+            script: 
+                if ($injector.ASRmodel[$request.botId] === "tinkoff") {
+                    // $session.query = numeralsToNumbers($request.query);
+                    justAsr(numeralsToNumbers($request.query));
+                } else {
+                    justAsr($request.query);
+                }
             a: далее
             go: /TestRecognition
             
