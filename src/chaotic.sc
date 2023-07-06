@@ -20,7 +20,7 @@ theme: /Address
                 if (["Казахстан", "Россия"].indexOf($temp.dadataRes.country) === -1) $temp.dadataOk = false;
                 if (!$temp.dadataRes.street || !$temp.dadataRes.house) $temp.dadataOk = false;
                 addLineTable($request.query, $temp.dadataResponse.result);
-            a: {{$temp.dadataOk ? $temp.dadataResponse.result + "Это правильный ответ?" : "Извините, не могу найти адрес в базе данных. Вы сказали " + $session.query + "Верно?"}}
+            a: {{$temp.dadataOk ? $temp.dadataResponse.result + ". Это правильный ответ?" : "Извините, не могу найти адрес в базе данных. Вы сказали " + $session.query + "Верно?"}}
             # a: Это правильный ответ?
             
             state: No
