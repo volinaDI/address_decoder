@@ -79,7 +79,8 @@ theme: /
         
         state: Get
             q: *
-            a: Записала ваш запрос: {{$request.query}}
+            # a: Записала запрос: {{$request.query}}
+            a: Записала запрос.
             script: 
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") {
                     // $session.query = numeralsToNumbers($request.query);
@@ -87,7 +88,7 @@ theme: /
                 } else {
                     justAsr($request.query);
                 }
-            a: далее
+            a: Давай дальше
             go: /TestRecognition
             
         state: NoMatch
