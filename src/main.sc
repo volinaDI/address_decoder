@@ -23,8 +23,8 @@ theme: /
         #     go!: /AskSelectAPI
         # if: $client.api === "yandex"
         #     go!: /Yandex/AskAddress
-        a: Здравствуйте.
-        go!: /Address/Ask
+        a: Привет
+        go!: /TestRecognition
 
     state: AskSelectAPI
         q!: [change/switch] api
@@ -75,11 +75,16 @@ theme: /
 
     state: TestRecognition || modal = true
         q!: * {(тест*/тестиров*) распозн*} *
-        a: Хорошо, тестируем распознавание. Говори, а я буду повторять.
+        a: Тестируем распознавание. Говори, а я буду записывать
         
         state: Get
             q: *
-            a: Вы сказали: {{$request.query}}
+            a: Записала ваш запрос: {{$request.query}}
             script: justAsr($request.query);
             a: далее
+            go: /TestRecognition
+            
+        state: NoMatch
+            event: speechNotRecognized
+            a: плохо слышно. повтори - пожалуйста
             go: /TestRecognition
