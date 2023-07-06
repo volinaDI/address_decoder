@@ -2,13 +2,29 @@ theme: /Yandex
     
     state: AskAddress
         q: * $yes * || fromState = "/Yandex/AskAddress/GetAddress"
-        a: Назовите адрес
+        a: Назовите пожалуйста - реально существующий адрес - без указания почтового индекса 
+        
+        # state: Get
+        #     q: * {[$addressCity] * ($addressStreet * $addressHome)} *
+        #     q: * {$addressCity * ($addressStreet * [$addressHome])} *
+        #     script:
+        #         $session.query = $request.query;
+        #         // если Тинькофф, надо пошаманить с числами
+        #         if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
+        #         var dadataOk = true;
+        #         // dadata
+        #         // $temp.dadataResponse = dadataParseResponse(parseAddressDadata($session.query));
+        #         // проверка страны на вменяемость
+        #         // if (["Казахстан", "Россия"].indexOf($temp.dadataResponse.country) === -1) dadataOk = false;
+        #     # a: {{toPrettyString($temp.dadataResponse)}}
+        
         
         state: GetAddress
-            q: *
+            q: * {[$addressCity] * ($addressStreet * $addressHome)} *
+            q: * {$addressCity * ($addressStreet * [$addressHome])} *
             script:
-                // если Тинькофф, надо пошаманить с числами
                 $session.query = $request.query;
+                // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
                 $temp.apiResponse = getResponseYandex($session.query);
             if: !$temp.apiResponse
@@ -52,17 +68,22 @@ theme: /Yandex
                 script: delete $session.query;
                 go!: /Yandex/AskAddress
 
-theme: /Dadata
+        state: NoMatch
+            event: noMatch
+            a: Это не похоже на адрес, попробуйте ещё раз
+
+
+# theme: /Dadata
     
-    state: AskAddress
-        a: Назовите адрес
+#     state: AskAddress
+#         a: Назовите адрес
         
-        state: GetAddress
-            q: *
-            script:
-                // если Тинькофф, надо пошаманить с числами
-                if ($injector.ASRmodel[$request.botId] === "tinkoff") $request.query = numeralsToNumbers($request.query);
-                $temp.apiResponse = parseAddressDadata($request.query);
-            a: {{$temp.apiResponse.result ? $temp.apiResponse.result : "Не нашлось такого адреса."}}
-            script: addLineTable($request.query, $temp.apiResponse.result ? $temp.apiResponse.result : "-");
-            go!: /Dadata/AskAddress
+#         state: GetAddress
+#             q: *
+#             script:
+#                 // если Тинькофф, надо пошаманить с числами
+#                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $request.query = numeralsToNumbers($request.query);
+#                 $temp.apiResponse = parseAddressDadata($request.query);
+#             a: {{$temp.apiResponse.result ? $temp.apiResponse.result : "Не нашлось такого адреса."}}
+#             script: addLineTable($request.query, $temp.apiResponse.result ? $temp.apiResponse.result : "-");
+#             go!: /Dadata/AskAddress

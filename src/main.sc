@@ -23,6 +23,7 @@ theme: /
             go!: /AskSelectAPI
         if: $client.api === "yandex"
             go!: /Yandex/AskAddress
+        a: Здравствуйте
         go!: /Dadata/AskAddress
 
     state: AskSelectAPI
@@ -46,7 +47,15 @@ theme: /
 
     state: TMP
         q!: tmp
-        a: s
+        a: пиши адрес
+
+        state: TMP
+            q: * $Address
+            a: это адрес
+
+        state: NoMatch
+            event: noMatch
+            a: это не адрес
 
     state: Reset
         q!: reset

@@ -15,6 +15,34 @@ function parseAddressDadata(text) {
     $analytics.setComment(toPrettyString(response));
     if (response && response.data) return response.data[0];
 }
+// dadata parse response
+function dadataParseResponse(obj) {
+    var cityType;
+    var city;
+    if (obj.region_type_full == "город") {
+        cityType = "город";
+        city = obj.region;
+    } else if (obj.city_type_full) {
+        cityType = obj.city_type_full;
+        city = obj.city;
+    } else if (obj.settlement_type_full) {
+        cityType = obj.settlement_type_full;
+        city = obj.settlement;
+    }
+    var res = {
+        "country": obj.country,
+        "city": city,
+        "cityType": cityType,
+        "street": obj.street,
+        "streetType": obj.street_type_full,
+        "house": obj.house,
+        "houseType": obj.house_type_full,
+        "house add": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
+        "index": obj.postal_code
+        
+    }
+    return res;
+}
 
 // yandex
 function getResponseYandex(text) {
