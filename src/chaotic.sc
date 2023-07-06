@@ -30,6 +30,7 @@ theme: /Address
         
         state: NoMatch
             event: noMatch
+            event: speechNotRecognized
             a: Это не похоже на адрес, попробуйте ещё раз. Назовите пожалуйста реально существующий адрес - без указания квартиры, этажа и почтового индекса.
             go!: /Address/Ask
 
