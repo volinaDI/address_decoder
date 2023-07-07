@@ -41,9 +41,18 @@ theme: /Address
                     if: $temp.incorrectCountry 
                         a: Давайте я попробую записать адрес по частям.
                         go!: /StepByStep/AskCountry
+                    if: $session.dadataRes.counrty && !$session.dadataRes.city
+                        go!: OnlyCountry
                     if: $session.dadataRes.city && !$session.dadataRes.street
                         go!: OnlyCity
-            
+                    if: $session.dadataRes.city && $session.dadataRes.street && !$session.dadataRes.house
+                        go!: OnlyStreet
+                    else: 
+                        a: Произошла техническая ошибка. Нет доступа к базе данных
+                        a: Перезвоните пожалуйста.
+                        script: $response.replies.push({"type": "hangup"});
+
+                        
             state: Yes
                 q: * $yes * 
                 script: 
