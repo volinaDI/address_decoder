@@ -41,7 +41,7 @@ theme: /StepByStep
             q: *
             script:
                 # $session.stepByStepCounter = 0;
-                $temp.dadataResponse = parseAddressDadata($request.query);
+                $temp.dadataResponse = parseAddressDadata($request.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана"));
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.city && $session.dadataResult.cityType
                 a: Населённый пункт - {{$session.dadataResult.cityType}} {{$session.dadataResult.city}}, правильно?
@@ -53,6 +53,8 @@ theme: /StepByStep
                 script:
                     $session.city = $session.dadataResult.city;
                     $session.cityType = $session.dadataResult.cityType;
+                    $session.region = $session.dadataResult.region;
+                    $session.regionType = $session.dadataResult.region_type_full;
                     delete $session.dadataResult;
                 go!: /StepByStep/AskStreet
 
@@ -117,11 +119,12 @@ theme: /StepByStep
             
             state: Correct
                 q: * $yes *
-                a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
+                a: Итак, полный адрес {{$session.country}}, {{$session.regionType}}, {{$session.region}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 script:
                     # addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "));
                     addFullLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "),
                     $session.country,
+                    $session.region + " (" + $session.regionType + ")",
                     $session.city + " (" + $session.cityType + ")",
                     $session.streetType ? $session.street + " (" + $session.streetType + ")" : $session.street,
                     "№" + $session.house)

@@ -10,6 +10,7 @@ theme: /Address
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
                 $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
+                $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана");
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
@@ -58,11 +59,13 @@ theme: /Address
                     // заполнение таблицы
                     # addLineTable($session.firstRequest, $session.dadataResponse.result);
                     addFullLineTable($session.firstRequest, $session.dadataResponse.result,
-                    $session.dadataResponse.country,
+                    $session.dadataRes.country,
+                    $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
+                    # {{$session.regionType}}, {{$session.region}}
                     $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
                     # $session.dadataRes.streetType + $session.dadataRes.street
                     $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
-                    "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? $session.dadataRes.houseAdd : ""))
+                    "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? " " + $session.dadataRes.houseAdd : ""))
                     delete $session.firstRequest;
                 go!: /Address/Ask
             
