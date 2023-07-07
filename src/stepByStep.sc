@@ -92,7 +92,7 @@ theme: /StepByStep
                 q: * $yes *
                 script:
                     $session.street = $session.dadataResult.street ? $session.dadataResult.street : $session.tryStreet ;
-                    $session.streetType = $session.dadataResult.streetType ? $session.dadataResult.streetType : $session.tryStreetType;
+                    $session.streetType = $session.dadataResult.streetType ? $session.dadataResult.streetType : $session.tryStreetType.toLowerCase();
                     delete $session.dadataResult;
                 go!: /StepByStep/AskHouseNumber
 
@@ -126,7 +126,7 @@ theme: /StepByStep
                     $session.country,
                     # $session.region + " (" + $session.regionType + ")",
                     $session.city + " (" + $session.cityType + ")",
-                    $session.streetType ? $session.street + " (" + $session.streetType + ")" : $session.street,
+                    $session.streetType ? $session.street + " (" + $session.streetType.toLowerCase() + ")" : $session.street,
                     "№" + $session.house)
                 go!: /Address/Ask
                 
