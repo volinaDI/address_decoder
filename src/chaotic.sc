@@ -10,7 +10,7 @@ theme: /Address
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
                 $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
-                $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана");
+                $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана");
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
