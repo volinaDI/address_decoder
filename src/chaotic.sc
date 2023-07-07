@@ -1,8 +1,6 @@
 theme: /Address
     
     state: Ask
-        q: * $yes * || fromState = "/Address/Ask/Get"
-        # a: Назовите пожалуйста - реально существующий адрес - без указания почтового индекса 
         a: Назовите адрес
         
         state: Get
@@ -15,9 +13,9 @@ theme: /Address
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
-                $temp.dadataOk = true;
                 // dadata
                 $session.dadataResponse = parseAddressDadata($session.query);
+                $temp.dadataOk = true;
             # dadata не отвечает
             if: !$session.dadataResponse
                 a: Произошла техническая ошибка. Нет доступа к базе данных
@@ -31,9 +29,10 @@ theme: /Address
                         $temp.dadataOk = false;
                         $temp.incorrectCountry = true;
                     }
-                    if (!$session.dadataRes.street || !$session.dadataRes.house) $temp.dadataOk = false;
-                    // заполнение таблицы
-                    addLineTable($request.query, $session.dadataResponse.result);
+                    if (!$session.dadataRes.street || !$session.dadataRes.house) {
+                        $temp.dadataOk = false;
+                        // $reactions.answer("dss" + toPrettyString($session.dadataRes.street));
+                    }
                     // формулируем ответ
                     $session.addressAnswer = formAddreessToSay($session.dadataRes);
                 if: $temp.dadataOk
@@ -44,7 +43,14 @@ theme: /Address
                         go!: /StepByStep/AskCountry
                     if: $session.dadataRes.city && !$session.dadataRes.street
                         go!: OnlyCity
-                    
+            
+            state: Yes
+                q: * $yes * 
+                script: 
+                    // заполнение таблицы
+                    addLineTable($request.query, $session.dadataResponse.result);
+                go!: /Address/Ask
+            
             state: No
                 q: * $no *
                 a: Очень жаль. Давайте я попробую записать адрес по частям.

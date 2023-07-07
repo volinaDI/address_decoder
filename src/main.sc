@@ -17,36 +17,25 @@ require: replacesYandex.yaml
   name = replacesYandex
 
 require: functions.js
+
+init:
+    bind("postProcess", function($context) {
+        $dialer.setNoInputTimeout(20000);
+    });
+
+
 theme: /
 
     state: Start
         q!: start
         q!: * (привет/сначала/~начало) *
         script: $client.api = "dadata"
-        #     go!: /AskSelectAPI
-        # if: $client.api === "yandex"
-        #     go!: /Yandex/AskAddress
         a: Здравствуйте.
         go!: /Address/Ask
 
-    state: AskSelectAPI
-        q!: [change/switch] api
-        a: Чтобы тестировать интеграцию Дадата скажите - дата. Чтобы попробовать Яндекс скажите - Яндекс.
-        
-        state: GetAPI
-            q: * ($one/[да] ~дата/да да) * : dadata
-            q: * ($two/яндекс) * : yandex
-            script: $client.api = $parseTree._Root;
-            a: Хорошо, тестируем {{ $parseTree._Root === "dadata" ? "Дадата" : "Яндекс"}}
-            go!: /Start
-            
-        state: NoMatch
-            a: Что тестируем, Дадата или Яндекс?
-            go: /AskSelectAPI
-            
     state: NoMatch
         event!: noMatch
-        a: No match. Вы говорите пользователя: {{$request.query}}
+        a: No match. Вы говорите: {{$request.query}}
 
     state: TMP
         q!: tmp

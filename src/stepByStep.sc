@@ -112,19 +112,23 @@ theme: /StepByStep
         state: Get
             q: $customHouse
             script:
-                # $session.stepByStepCounter = 0;
-                $session.house = $request.query.replace(/дом /, "").replace(/номер /, "");
-                addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, $session.house].join(" ")); 
-            # a: Номер дома - {{$session.house}}
-            a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
+                $session.house = $request.query.replace(/дом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
+            a: Полный номер дома - {{$session.house}}. Это правильно?
             go!: /Address/Ask
             
-        state: Incorrect
-            event: speechNotRecognized
-            event: noMatch
-            if: $session.stepByStepCounter > 2
-                a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
-                go!: /Address/Ask
-            script: $session.stepByStepCounter++;
-            # a: 
-            go!: /StepByStep/AskHouseNumber
+            state: Correct
+                q: * $yes *
+                a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
+                script: addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, $session.house].join(" "));
+            
+            state: Incorrect
+                event: speechNotRecognized
+                event: speechNotRecognized || fromState = "/StepByStep/AskHouseNumber"
+                event: noMatch
+                event: noMatch || fromState = "/StepByStep/AskHouseNumber"
+                if: $session.stepByStepCounter > 2
+                    a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
+                    go!: /Address/Ask
+                script: $session.stepByStepCounter++;
+                a: Назовите пожалуйста только полный номер дома. Если у дома есть корпус или строение, назовите их тоже.
+                go!: /StepByStep/AskHouseNumber

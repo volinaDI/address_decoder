@@ -50,9 +50,10 @@ function formAddreessToSay(addressObj) {
     else return res;
     
     if (addressObj.street && addressObj.streetType) res += ", " + addressObj.streetType + " " + addressObj.street;
-    // else return res;
+    else return res;
     
     if (addressObj.house) res += ", " + addressObj.house;
+    else return res;
     
     if (addressObj.houseAdd) res += " " + addressObj.houseAdd;
     
