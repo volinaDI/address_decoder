@@ -56,7 +56,7 @@ function formAddreessToSay(addressObj) {
     
     if (addressObj.houseAdd) res += " " + addressObj.houseAdd;
     
-    if (addressObj.postalIndex) res += " почтовый индекс " + addressObj.postalIndex;
+    // if (addressObj.postalIndex) res += " почтовый индекс " + addressObj.postalIndex;
     
     return res;
     
