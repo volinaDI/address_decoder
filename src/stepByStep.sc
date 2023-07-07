@@ -120,7 +120,7 @@ theme: /StepByStep
                 a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 script:
                     # addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "));
-                    addFullLineTable($session.firstRequest, $session.dadataResponse.result,
+                    addFullLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "),
                     $session.country,
                     $session.city + " (" + $session.cityType + ")",
                     $session.streetType ? $session.street + " (" + $session.streetType + ")" : $session.street,
