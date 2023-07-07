@@ -74,8 +74,8 @@ theme: /StepByStep
         script: $session.stepByStepCounter = 0;
         
         state: Get
-            q: $streetName [$streetType]
-            q: [$streetType] $streetName
+            q: [$streetType] $streetName [$streetType]
+            # q: [$streetType] $streetName
             script:
                 # $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
@@ -86,7 +86,7 @@ theme: /StepByStep
                 a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._streetName}}. Правильно?
                 script:
                     $session.tryStreet = $parseTree._streetName;
-                    $session.tryStreetType = $parseTree._streetType;
+                    $session.tryStreetType = $parseTree._streetType.toLowerCase();
     
             state: Correct
                 q: * $yes *
