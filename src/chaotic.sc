@@ -36,7 +36,7 @@ theme: /Address
                     // формулируем ответ
                     $session.addressAnswer = formAddreessToSay($session.dadataRes);
                 if: $temp.dadataOk
-                    a: {{$session.addressAnswer}}. Это правильный ответ?
+                    a: {{$session.addressAnswer}}. Это правильный адрес?
                 else:
                     if: $temp.incorrectCountry
                         a: Давайте я попробую записать адрес по частям.
@@ -48,13 +48,20 @@ theme: /Address
                 q: * $yes * 
                 script: 
                     // заполнение таблицы
-                    addLineTable($request.query, $session.dadataResponse.result);
+                    addLineTable($session.firstRequest, $session.dadataResponse.result);
+                    delete $session.firstRequest;
                 go!: /Address/Ask
             
             state: No
                 q: * $no *
                 a: Очень жаль. Давайте я попробую записать адрес по частям.
                 go!: /StepByStep/AskCountry
+                
+            state: NoMatch
+                event: noMatch
+                event: speechNotRecognized
+                a: Простите - не расслышала. {{$session.addressAnswer}} - это правильный адрес?
+                go: /Address/Ask/Get
                 
             state: OnlyCity
                 a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
