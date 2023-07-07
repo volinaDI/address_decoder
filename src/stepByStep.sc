@@ -58,7 +58,6 @@ theme: /StepByStep
         
         state: Get
             q: {$addressWordsRegexp $streetType}
-            a: {{toPrettyString($parseTree)}}
             script:
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
