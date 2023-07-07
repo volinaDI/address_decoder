@@ -41,7 +41,7 @@ theme: /StepByStep
             q: *
             script:
                 # $session.stepByStepCounter = 0;
-                $temp.dadataResponse = parseAddressDadata($request.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана"));
+                $temp.dadataResponse = parseAddressDadata($request.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана"));
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.city && $session.dadataResult.cityType
                 a: Населённый пункт - {{$session.dadataResult.cityType}} {{$session.dadataResult.city}}, правильно?
