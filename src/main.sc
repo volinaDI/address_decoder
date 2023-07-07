@@ -39,6 +39,7 @@ theme: /
 
     state: TMP
         q!: tmp
+        a: {{"Нур-суsdfлтан".toLowerCase().replace(replacesYandex.pp, "астана")}}
         a: пиши адрес
 
         state: TMP
