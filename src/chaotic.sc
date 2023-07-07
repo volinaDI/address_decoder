@@ -9,37 +9,90 @@ theme: /Address
             q: * {[$addressCity/$City] * ($addressStreet * $addressHome)} *
             q: * {($addressCity/$City) * ($addressStreet * [$addressHome])} *
             script:
+                delete $session.dadataRes;
+                delete $session.addressAnswer;
                 $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "");
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
                 $temp.dadataOk = true;
                 // dadata
-                $temp.dadataResponse = parseAddressDadata($session.query);
+                $session.dadataResponse = parseAddressDadata($session.query);
             # dadata не отвечает
-            if: !$temp.dadataResponse
+            if: !$session.dadataResponse
                 a: Произошла техническая ошибка. Нет доступа к базе данных
                 a: Перезвоните пожалуйста.
                 script: $response.replies.push({"type": "hangup"});
             else: 
                 script:
-                    $temp.dadataRes = dadataParseResponse($temp.dadataResponse);
+                    $session.dadataRes = dadataParseResponse($session.dadataResponse);
                     // проверка страны на вменяемость
-                    if (["Казахстан", "Россия"].indexOf($temp.dadataRes.country) === -1) $temp.dadataOk = false;
-                    if (!$temp.dadataRes.street || !$temp.dadataRes.house) $temp.dadataOk = false;
-                    addLineTable($request.query, $temp.dadataResponse.result);
-                    # заполнение таблицы
+                    if (["Казахстан", "Россия", "Беларусь", "Армения", "Молдова, Республика"].indexOf($session.dadataRes.country) === -1) {
+                        $temp.dadataOk = false;
+                        $temp.incorrectCountry = true;
+                    }
+                    if (!$session.dadataRes.street || !$session.dadataRes.house) $temp.dadataOk = false;
+                    // заполнение таблицы
+                    addLineTable($request.query, $session.dadataResponse.result);
+                    // формулируем ответ
+                    $session.addressAnswer = formAddreessToSay($session.dadataRes);
+                if: $temp.dadataOk
+                    a: {{$session.addressAnswer}}. Это правильный ответ?
+                else:
+                    if: $temp.incorrectCountry
+                        a: Давайте я попробую записать адрес по частям.
+                        go!: /StepByStep/AskCountry
+                    if: $session.dadataRes.city && !$session.dadataRes.street
+                        go!: OnlyCity
                     
-                    
-                a: {{$temp.dadataOk ? $temp.dadataResponse.result + ".Это правильный ответ?" : "Извините, не могу найти адрес в базе данных. Вы сказали " + $session.query + ". Верно?"}}
-
             state: No
                 q: * $no *
-                a: Очень жаль. Попробуем ещё раз?
-                go!: /Address/Ask
+                a: Очень жаль. Давайте я попробую записать адрес по частям.
+                go!: /StepByStep/AskCountry
+                
+            state: OnlyCity
+                a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
+                
+                state: Correct
+                    q: * $yes *
+                    script:
+                        $session.country = $session.dadataRes.country;
+                        $session.city = $session.dadataRes.city;
+                        $session.cityType = $session.dadataRes.cityType;
+                    a: Хорошо, помогите мне пожалуйста записать полный адрес
+                    go!: /StepByStep/AskStreet
+                    
+                state: Incorrect
+                    q: *
+                    event: speechNotRecognized
+                    a: Очень жаль. Давайте я попробую записать адрес по частям.
+                    script: delete $session.dadataRes;
+                    go!: /StepByStep/AskCountry
+                
+            state: OnlyStreet
+                a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
+                
+                state: Correct
+                    q: * $yes *
+                    script:
+                        $session.country = $session.dadataRes.country;
+                        $session.city = $session.dadataRes.city;
+                        $session.cityType = $session.dadataRes.cityType;
+                        $session.street = $session.dadataRes.street;
+                        $session.streetType = $session.dadataRes.streetType;
+                    a: Хорошо, помогите мне пожалуйста записать полный адрес
+                    go!: /StepByStep/AskHouseNumber
+                    
+                state: Incorrect
+                    q: *
+                    event: speechNotRecognized
+                    a: Очень жаль. Давайте я попробую записать адрес по частям.
+                    script: delete $session.dadataRes;
+                    go!: /StepByStep/AskCountry
         
         state: NoMatch
             event: noMatch
             event: speechNotRecognized
+            # script: delete $session.dadataRes;
             a: Это не похоже на адрес, попробуйте ещё раз. Назовите пожалуйста реально существующий адрес - без указания квартиры, этажа и почтового индекса.
             go!: /Address/Ask
 

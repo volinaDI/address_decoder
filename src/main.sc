@@ -10,6 +10,7 @@ require: city/city.sc
   
 require: chaotic.sc
 require: stepByStep.sc
+require: patterns.sc
 
 require: replacesYandex.yaml
   var = replacesYandex
@@ -49,7 +50,7 @@ theme: /
 
     state: TMP
         q!: tmp
-        a: {{"Квесисская 2-я ул, дом № 5, корпус 3, Литера Д".replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "")}}
+        # a: {{"Квесисская 2-я ул, дом № 5, корпус 3, Литера Д".replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "")}}
         a: пиши адрес
 
         state: TMP

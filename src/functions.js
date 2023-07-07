@@ -37,11 +37,29 @@ function dadataParseResponse(obj) {
         "streetType": obj.street_type_full,
         "house": obj.house,
         "houseType": obj.house_type_full,
-        "house add": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
-        "index": obj.postal_code
+        "houseAdd": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
+        "postalIndex": obj.postal_code
         
     }
     return res;
+}
+
+function formAddreessToSay(addressObj) {
+    var res = addressObj.country;
+    if (addressObj.city && addressObj.cityType) res += " " + addressObj.cityType + " " + addressObj.city;
+    else return res;
+    
+    if (addressObj.street && addressObj.streetType) res += " " + addressObj.street + " " + addressObj.streetType;
+    // else return res;
+    
+    if (addressObj.house) res += " " + addressObj.house;
+    
+    if (addressObj.houseAdd) res += " " + addressObj.houseAdd;
+    
+    if (addressObj.postalIndex) res += " почтовый индекс " + addressObj.postalIndex;
+    
+    return res;
+    
 }
 
 // yandex
