@@ -2,15 +2,28 @@ theme: /Address
     
     state: Ask
         a: Назовите адрес
+        script:
+            delete $session.house;
+            delete $session.street;
+            delete $session.streetType;
+            delete $session.city;
+            delete $session.cityType;
+            delete $session.country;
+            delete $session.yandexOk;
+            delete $session.dadataRes;
+            delete $session.addressAnswer;
         
         state: Get
-            q: * {[$addressCity/$City] * ($addressStreet * $addressHome)} *
-            q: * {($addressCity/$City) * ($addressStreet * [$addressHome])} *
+            q: * {[$addressCity/$City] * ($addressStreet * $customHouse)} *
+            q: * {($addressCity/$City) * ($addressStreet * [$customHouse])} *
+            q: * {башкортостан * (сквер/худайбер*/худойбер*)} *
             script:
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
-                $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
-                $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана");
+                # $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
+                $session.query = $request.query.replace(/номер /, "");
+                $session.query = chaoticAddressReplace($session.query);
+                # $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана");
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
@@ -22,7 +35,7 @@ theme: /Address
                 a: Произошла техническая ошибка. Нет доступа к базе данных
                 a: Перезвоните пожалуйста.
                 script: $response.replies.push({"type": "hangup"});
-            else: 
+            else:
                 script:
                     $session.dadataRes = dadataParseResponse($session.dadataResponse);
                     // проверка страны на вменяемость
@@ -30,25 +43,58 @@ theme: /Address
                         $temp.dadataOk = false;
                         $temp.incorrectCountry = true;
                     }
-                    if (!$session.dadataRes.street || !$session.dadataRes.house) {
-                        $temp.dadataOk = false;
-                        // $reactions.answer("dss" + toPrettyString($session.dadataRes.street));
+                    // если Казахстан, используем яндекс
+                    if ($session.dadataRes.country === "Казахстан") {
+                        // костыль улица Шугыла Бау-Бакша Сериктестиги
+                        if (isBauBaksha($session.query)) {
+                            $session.street = "Шугыла Бау-Бакша Сериктестиги";
+                            $session.streetType = "улица";
+                            $session.city = "Кызылорда";
+                            $session.cityType = "город";
+                            $session.country = "Казахстан";
+                            if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
+                            $session.yandexOk = true;
+                        } else {
+                            $temp.yandexRes = parseYandexGeoObject(getResponseYandex($session.query));
+                            if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);
+                            if ($temp.yandexComponents) {
+                                $session.country = $temp.yandexComponents.country;
+                                $session.city = $temp.yandexComponents.city;    
+                                $session.cityType = $temp.yandexComponents.cityType;
+                                $session.street = $temp.yandexComponents.street;
+                                $session.streetType = $temp.yandexComponents.streetType;
+                            }
+                            if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
+                        }
                     }
                     // формулируем ответ
                     $session.addressAnswer = formAddreessToSay($session.dadataRes);
-                if: $temp.dadataOk
+                    if ($session.street && $session.streetType && $session.house) {
+                        $session.addressAnswer = $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street +  ", дом "+ $session.house;
+                        $session.yandexOk = true;
+                        $temp.dadataOk = false;
+                    } else if ($session.street && $session.streetType && !$session.house) {
+                        $session.addressAnswer = $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street;
+                        $session.yandexOk = true;
+                        $temp.yandexOnlyStreet = true;
+                        $temp.dadataOk = false;
+                    }
+                    if (!$session.dadataRes.street || !$session.dadataRes.house) {
+                        $temp.dadataOk = false;
+                    }
+                if: $temp.dadataOk || $session.yandexOk
                     a: {{$session.addressAnswer}}. Это правильный адрес?
                 else:
                     if: $temp.incorrectCountry 
                         a: Давайте я попробую записать адрес по частям.
                         go!: /StepByStep/AskCountry
-                    if: $session.dadataRes.country && !$session.dadataRes.city
+                    if: $session.dadataRes.country && !$session.dadataRes.city && !$session.yandexOk
                         go!: OnlyCountry
-                    if: $session.dadataRes.city && !$session.dadataRes.street
+                    if: $session.dadataRes.city && !$session.dadataRes.street && !$session.yandexOk
                         go!: OnlyCity
-                    if: $session.dadataRes.city && $session.dadataRes.street && !$session.dadataRes.house
+                    if: ($session.dadataRes.city && $session.dadataRes.street && !$session.dadataRes.house && !$session.yandexOk) || $temp.yandexOnlyStreet
                         go!: OnlyStreet
-                    else: 
+                    elseif:!$session.yandexOk 
                         a: Произошла техническая ошибка. Нет доступа к базе данных
                         a: Перезвоните пожалуйста.
                         script: $response.replies.push({"type": "hangup"});
@@ -58,12 +104,21 @@ theme: /Address
                 script: 
                     // заполнение таблицы
                     # addLineTable($session.firstRequest, $session.dadataResponse.result);
-                    addFullLineTable($session.firstRequest, $session.dadataResponse.result,
-                    $session.dadataRes.country,
+                    if ($session.yandexOk) {
+                        addFullLineTable($session.firstRequest, $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street +  ", дом "+ $session.house,
+                        $session.country,
                     # $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
-                    $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
-                    $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
-                    "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? " " + $session.dadataRes.houseAdd : ""))
+                        $session.city + " (" + $session.cityType + ")",
+                        $session.street + " (" + $session.streetType + ")",
+                        "№" + $session.house);
+                    } else {
+                        addFullLineTable($session.firstRequest, $session.dadataResponse.result,
+                        $session.dadataRes.country,
+                    # $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
+                        $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
+                        $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
+                        "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? " " + $session.dadataRes.houseAdd : ""))
+                    }
                     delete $session.firstRequest;
                 go!: /Address/Ask
             

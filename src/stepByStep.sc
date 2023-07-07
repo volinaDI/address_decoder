@@ -41,7 +41,7 @@ theme: /StepByStep
             q: *
             script:
                 # $session.stepByStepCounter = 0;
-                $temp.dadataResponse = parseAddressDadata($request.query.replace(/[Нн][уо]р[\- ]?султан[^\s]/, "Астана"));
+                $temp.dadataResponse = parseAddressDadata($request.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана"));
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.city && $session.dadataResult.cityType
                 a: Населённый пункт - {{$session.dadataResult.cityType}} {{$session.dadataResult.city}}, правильно?
@@ -74,25 +74,26 @@ theme: /StepByStep
         script: $session.stepByStepCounter = 0;
         
         state: Get
-            q: $streetName [$streetType]
-            q: [$streetType] $streetName
+            q: [$streetType] $streetName [$streetType]
+            # q: [$streetType] $streetName
             script:
                 # $session.stepByStepCounter = 0;
+                $request.query = chaoticAddressReplace($request.query);
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.street && $session.dadataResult.streetType
                 a: {{$session.dadataResult.streetType}} {{$session.dadataResult.street}}, правильно?
             else:
-                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._streetName}}. Правильно?
+                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{chaoticAddressReplace($parseTree._streetName)}}. Правильно?
                 script:
-                    $session.tryStreet = $parseTree._streetName;
-                    $session.tryStreetType = $parseTree._streetType;
+                    $session.tryStreet = capitalize(chaoticAddressReplace($parseTree._streetName));
+                    $session.tryStreetType = $parseTree._streetType ? $parseTree._streetType.toLowerCase() : "улица";
     
             state: Correct
                 q: * $yes *
                 script:
                     $session.street = $session.dadataResult.street ? $session.dadataResult.street : $session.tryStreet ;
-                    $session.streetType = $session.dadataResult.streetType ? $session.dadataResult.streetType : $session.tryStreetType;
+                    $session.streetType = $session.dadataResult.streetType ? $session.dadataResult.streetType : $session.tryStreetType.toLowerCase();
                     delete $session.dadataResult;
                 go!: /StepByStep/AskHouseNumber
 
@@ -108,18 +109,21 @@ theme: /StepByStep
                 go: /StepByStep/AskStreet
             
     state: AskHouseNumber
+        if: $session.house
+            go!: Get
         a: Назовите пожалуйста только номер дома
-        script: $session.stepByStepCounter = 0;
+        script:
+            $session.stepByStepCounter = 0;
 
         state: Get
             q: $customHouse
-            script:
-                $session.house = $request.query.toLowerCase().replace(/[Дд]ом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
+            if: !$session.house
+                script:
+                    $session.house = $request.query.toLowerCase().replace(/[Дд]ом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
             a: Полный номер дома - {{$session.house}}. Это правильно?
             
             state: Correct
                 q: * $yes *
-                # a: Итак, полный адрес {{$session.country}}, {{$session.regionType}} {{$session.region}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 a: Итак, полный адрес {{$session.country}},  {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 script:
                     # addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "));
@@ -127,8 +131,9 @@ theme: /StepByStep
                     $session.country,
                     # $session.region + " (" + $session.regionType + ")",
                     $session.city + " (" + $session.cityType + ")",
-                    $session.streetType ? $session.street + " (" + $session.streetType + ")" : $session.street,
+                    $session.streetType ? $session.street + " (" + $session.streetType.toLowerCase() + ")" : $session.street,
                     "№" + $session.house)
+                    delete $session.house;
                 go!: /Address/Ask
                 
             state: Incorrect
@@ -139,6 +144,8 @@ theme: /StepByStep
                 if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                     go!: /Address/Ask
-                script: $session.stepByStepCounter++;
+                script:
+                    delete $session.house;
+                    $session.stepByStepCounter++;
                 a: Назовите пожалуйста только полный номер дома. Если у дома есть корпус или строение, назовите их тоже.
                 go: /StepByStep/AskHouseNumber

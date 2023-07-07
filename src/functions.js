@@ -22,6 +22,9 @@ function dadataParseResponse(obj) {
     if (obj.region_type_full == "город") {
         cityType = "город";
         city = obj.region;
+        if (city === "") {
+            
+        }
     } else if (obj.city_type_full) {
         cityType = obj.city_type_full;
         city = obj.city;
@@ -35,8 +38,8 @@ function dadataParseResponse(obj) {
         // "regionType": obj.region_type_full,
         "city": city,
         "cityType": cityType,
-        "street": obj.street,
-        "streetType": obj.street_type_full,
+        "street": city === "Кумертау" && obj.settlement_type_full && obj.settlement_type_full == "сквер" ? obj.settlement : obj.street,
+        "streetType": city === "Кумертау" && obj.settlement_type_full && obj.settlement_type_full == "сквер" ? "сквер" : obj.street_type_full,
         "house": obj.house,
         "houseType": obj.house_type_full,
         "houseAdd": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
@@ -71,20 +74,66 @@ function getResponseYandex(text) {
     var response = $http.get(params.url
         + "?apikey=" + params.token
         + "&geocode=" + formatQueryYandex(text) +
+        + "&result=1" +
         + "&&format=json");
     if (response && response.data && response.data.ymaps) return response.data.ymaps;
 }
 
 
-function parseYandexRes(obj) {
+function parseYandexGeoObject(obj) {
     if (obj && obj.GeoObjectCollection 
       && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData
       && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found === 0) {
         return false;
     }
     if (obj && obj.GeoObjectCollection 
-      && obj.GeoObjectCollection.featureMember) {
-        return obj.GeoObjectCollection.featureMember;
+      && obj.GeoObjectCollection.featureMember
+      && obj.GeoObjectCollection.featureMember[0]
+      && obj.GeoObjectCollection.featureMember[0].GeoObject) {
+        return obj.GeoObjectCollection.featureMember[0].GeoObject;
+    }
+    if (obj && obj.GeoObjectCollection 
+      && obj.GeoObjectCollection.featureMember
+      && obj.GeoObjectCollection.featureMember.GeoObject) {
+        return obj.GeoObjectCollection.featureMember.GeoObject;
+    }
+}
+
+function yandexComponents(geoObject) {
+    if (geoObject && geoObject.metaDataProperty
+      && geoObject.metaDataProperty.GeocoderMetaData
+      && geoObject.metaDataProperty.GeocoderMetaData.Address
+      && geoObject.metaDataProperty.GeocoderMetaData.Address.Component) {
+        var addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Component;
+    }
+    if (addressComponents[0].kind === "country" && addressComponents[0].name !== "Казахстан") return false;
+    var res = {country: "Казахстан"};
+    addressComponents.forEach(function(component) {
+        if (component.kind && component.kind === "locality") {
+            res.cityType = "город",
+            res.city = component.name
+        } else if (component.kind && component.kind === "street") {
+            var streetPatterns = $nlp.match(component.name, "/StepByStep/AskStreet/Get");
+            // $reactions.answer(streetPatterns._streetType && true == true);
+            // $reactions.answer(toPrettyString(streetPatterns));
+            if (streetPatterns && streetPatterns.parseTree._streetType) {
+                res.street = streetPatterns.parseTree._streetName.replace(streetPatterns.parseTree._streetType, "");
+                res.streetType = streetPatterns.parseTree._streetType;
+            } else { 
+                res.street = component.name;
+                res.streetType = "улица";
+            }
+        }
+    });
+    return res;
+}
+
+function yandexFormattedAddress(geoObject) {
+    if (geoObject && geoObject.metaDataProperty
+      && geoObject.metaDataProperty.GeocoderMetaData
+      && geoObject.metaDataProperty.GeocoderMetaData.Address
+      && geoObject.metaDataProperty.GeocoderMetaData.Address.formatted) {
+        return geoObject.metaDataProperty.GeocoderMetaData.Address.formatted;
     }
 }
 
@@ -160,4 +209,13 @@ function addFullLineTable(request, result, country, city, street, house) {
         },
         headers: {"Content-Type": "application/json"}
         });
+}
+
+function isBauBaksha(text) {
+    var entities = $caila.entitiesLookup(text, true).entities
+    var res = false;
+    entities.forEach(function(entityElem) {
+        if (entityElem.entity === "bauBaksha") res = true;
+    });
+    return res;
 }
