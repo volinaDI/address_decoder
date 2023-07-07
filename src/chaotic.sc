@@ -41,7 +41,7 @@ theme: /Address
                     if: $temp.incorrectCountry 
                         a: Давайте я попробую записать адрес по частям.
                         go!: /StepByStep/AskCountry
-                    if: $session.dadataRes.counrty && !$session.dadataRes.city
+                    if: $session.dadataRes.country && !$session.dadataRes.city
                         go!: OnlyCountry
                     if: $session.dadataRes.city && !$session.dadataRes.street
                         go!: OnlyCity
@@ -52,7 +52,6 @@ theme: /Address
                         a: Перезвоните пожалуйста.
                         script: $response.replies.push({"type": "hangup"});
 
-                        
             state: Yes
                 q: * $yes * 
                 script: 
@@ -73,7 +72,7 @@ theme: /Address
                 go: /Address/Ask/Get
                 
             state: OnlyCountry
-                a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
+                a: Я поняла только часть адреса. Страна {{$session.addressAnswer}} - это правильно?
                 
                 state: Correct
                     q: * $yes *
