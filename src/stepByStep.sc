@@ -112,7 +112,7 @@ theme: /StepByStep
         state: Get
             q: $customHouse
             script:
-                $session.house = $request.query.replace(/дом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
+                $session.house = $request.query.toLowerCase().replace(/[Дд]ом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
             a: Полный номер дома - {{$session.house}}. Это правильно?
             
             state: Correct
