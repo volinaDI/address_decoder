@@ -114,13 +114,13 @@ theme: /StepByStep
             script:
                 $session.house = $request.query.replace(/дом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
             a: Полный номер дома - {{$session.house}}. Это правильно?
-            go!: /Address/Ask
             
             state: Correct
                 q: * $yes *
                 a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 script: addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, $session.house].join(" "));
-            
+                go!: /Address/Ask
+                
             state: Incorrect
                 event: speechNotRecognized
                 event: speechNotRecognized || fromState = "/StepByStep/AskHouseNumber"
@@ -131,4 +131,4 @@ theme: /StepByStep
                     go!: /Address/Ask
                 script: $session.stepByStepCounter++;
                 a: Назовите пожалуйста только полный номер дома. Если у дома есть корпус или строение, назовите их тоже.
-                go!: /StepByStep/AskHouseNumber
+                go: /StepByStep/AskHouseNumber

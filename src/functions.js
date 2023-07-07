@@ -124,8 +124,8 @@ function addLineTable(request, result) {
             "range": "'Вольный формат'!A",
             "index": rowNum,
             "values": [
-                asr ? asr : "текстовый ввод",
-                $jsapi.context().client.api,
+                // asr ? asr : "текстовый ввод", // не показываем клиенту
+                // $jsapi.context().client.api, // не показываем клиенту
                 request,
                 result // результат парсится на кусочки обоими API, индекс тоже выуживается, просто пока не дошли руки
             ],
