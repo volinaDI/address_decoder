@@ -31,8 +31,8 @@ function dadataParseResponse(obj) {
     }
     var res = {
         "country": obj.country,
-        "city": obj.region,
-        "cityType": obj.region_type_full,
+        // "region": obj.region,
+        // "regionType": obj.region_type_full,
         "city": city,
         "cityType": cityType,
         "street": obj.street,

@@ -60,10 +60,8 @@ theme: /Address
                     # addLineTable($session.firstRequest, $session.dadataResponse.result);
                     addFullLineTable($session.firstRequest, $session.dadataResponse.result,
                     $session.dadataRes.country,
-                    $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
-                    # {{$session.regionType}}, {{$session.region}}
+                    # $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
                     $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
-                    # $session.dadataRes.streetType + $session.dadataRes.street
                     $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
                     "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? " " + $session.dadataRes.houseAdd : ""))
                     delete $session.firstRequest;

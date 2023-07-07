@@ -124,7 +124,7 @@ theme: /StepByStep
                     # addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "));
                     addFullLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "),
                     $session.country,
-                    $session.region + " (" + $session.regionType + ")",
+                    # $session.region + " (" + $session.regionType + ")",
                     $session.city + " (" + $session.cityType + ")",
                     $session.streetType ? $session.street + " (" + $session.streetType + ")" : $session.street,
                     "№" + $session.house)
