@@ -6,6 +6,7 @@ theme: /StepByStep
         state: Get
             q: *
             script:
+                $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.country
@@ -23,6 +24,10 @@ theme: /StepByStep
             state: Incorrect
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCountry"
+                if: $session.stepByStepCounter > 3
+                    a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
+                    go!: /Address/Ask
+                script: $session.stepByStepCounter++;
                 a: Назовите пожалуйста только страну. Как можно более отчётливо
                 go: /StepByStep/AskCountry
 
@@ -32,6 +37,7 @@ theme: /StepByStep
         state: Get
             q: *
             script:
+                $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.city && $session.dadataResult.cityType
@@ -50,6 +56,10 @@ theme: /StepByStep
             state: Incorrect
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCity"
+                if: $session.stepByStepCounter > 3
+                    a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
+                    go!: /Address/Ask
+                script: $session.stepByStepCounter++;
                 a: Назовите пожалуйста только населённый пункт. Как можно более отчётливо
                 go: /StepByStep/AskCity
                 
@@ -60,14 +70,15 @@ theme: /StepByStep
             q: $streetName [$streetType]
             q: [$streetType] $streetName
             script:
+                $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.street && $session.dadataResult.streetType
                 a: {{$session.dadataResult.streetType}} {{$session.dadataResult.street}}, правильно?
             else:
-                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._addressWordsRegexp}}. Правильно?
+                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._streetName}}. Правильно?
                 script:
-                    $session.tryStreet = $parseTree._addressWordsRegexp;
+                    $session.tryStreet = $parseTree._streetName;
                     $session.tryStreetType = $parseTree._streetType;
     
             state: Correct
@@ -82,6 +93,10 @@ theme: /StepByStep
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskStreet"
                 event: noMatch || fromState = "/StepByStep/AskStreet"
+                if: $session.stepByStepCounter > 3
+                    a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
+                    go!: /Address/Ask
+                script: $session.stepByStepCounter++;
                 a: Назовите пожалуйста только улицу. Как можно более отчётливо
                 go: /StepByStep/AskStreet
             
@@ -91,13 +106,19 @@ theme: /StepByStep
         state: Get
             q: $customHouse
             script:
-                $session.house = $request.query.replace(/дом /, "").replace(/номер /, "")
+                $session.stepByStepCounter = 0;
+                $session.house = $request.query.replace(/дом /, "").replace(/номер /, "");
+                addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, $session.house].join(" ")); 
             # a: Номер дома - {{$session.house}}
-            a: Итак, полный адрес {{$session.country}} {{$session.cityType}} {{$session.city}} {{$session.streetType}} {{$session.street}} {{$session.house}}
+            a: Итак, полный адрес {{$session.country}}, {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
             go!: /Address/Ask
             
         state: Incorrect
             event: speechNotRecognized
             event: noMatch
+            if: $session.stepByStepCounter > 3
+                a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
+                go!: /Address/Ask
+            script: $session.stepByStepCounter++;
             # a: 
             go!: /StepByStep/AskHouseNumber

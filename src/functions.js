@@ -46,13 +46,13 @@ function dadataParseResponse(obj) {
 
 function formAddreessToSay(addressObj) {
     var res = addressObj.country;
-    if (addressObj.city && addressObj.cityType) res += " " + addressObj.cityType + " " + addressObj.city;
+    if (addressObj.city && addressObj.cityType) res += ", " + addressObj.cityType + " " + addressObj.city;
     else return res;
     
-    if (addressObj.street && addressObj.streetType) res += " " + addressObj.street + " " + addressObj.streetType;
+    if (addressObj.street && addressObj.streetType) res += ", " + addressObj.streetType + " " + addressObj.street;
     // else return res;
     
-    if (addressObj.house) res += " " + addressObj.house;
+    if (addressObj.house) res += ", " + addressObj.house;
     
     if (addressObj.houseAdd) res += " " + addressObj.houseAdd;
     

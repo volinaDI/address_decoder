@@ -11,9 +11,10 @@ theme: /Address
             script:
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
-                $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "");
+                $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
+                $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
-                if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
+                if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
                 $temp.dadataOk = true;
                 // dadata
                 $session.dadataResponse = parseAddressDadata($session.query);
