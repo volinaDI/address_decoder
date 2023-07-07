@@ -57,7 +57,8 @@ theme: /StepByStep
         a: Назовите пожалуйста только улицу
         
         state: Get
-            q: {$addressWordsRegexp $streetType}
+            q: $streetName [$streetType]
+            q: [$streetType] $streetName
             script:
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
@@ -68,8 +69,7 @@ theme: /StepByStep
                 script:
                     $session.tryStreet = $parseTree._addressWordsRegexp;
                     $session.tryStreetType = $parseTree._streetType;
-                    
-            
+    
             state: Correct
                 q: * $yes *
                 script:
