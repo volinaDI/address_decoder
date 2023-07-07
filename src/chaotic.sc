@@ -38,7 +38,7 @@ theme: /Address
                 if: $temp.dadataOk
                     a: {{$session.addressAnswer}}. Это правильный адрес?
                 else:
-                    if: $temp.incorrectCountry
+                    if: $temp.incorrectCountry 
                         a: Давайте я попробую записать адрес по частям.
                         go!: /StepByStep/AskCountry
                     if: $session.dadataRes.city && !$session.dadataRes.street
@@ -63,6 +63,23 @@ theme: /Address
                 a: Простите - не расслышала. {{$session.addressAnswer}} - это правильный адрес?
                 go: /Address/Ask/Get
                 
+            state: OnlyCountry
+                a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
+                
+                state: Correct
+                    q: * $yes *
+                    script:
+                        $session.country = $session.dadataRes.country;
+                    a: Хорошо, помогите мне пожалуйста записать полный адрес
+                    go!: /StepByStep/AskCity
+
+                state: Incorrect
+                    q: *
+                    event: speechNotRecognized
+                    a: Очень жаль. Давайте я попробую записать адрес по частям.
+                    script: delete $session.dadataRes;
+                    go!: /StepByStep/AskCountry            
+
             state: OnlyCity
                 a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
                 
