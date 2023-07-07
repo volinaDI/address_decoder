@@ -98,7 +98,7 @@ theme: /StepByStep
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskStreet"
                 event: noMatch || fromState = "/StepByStep/AskStreet"
-                if: $session.stepByStepCounter > 3
+                if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                     go!: /Address/Ask
                 script: $session.stepByStepCounter++;
@@ -122,7 +122,7 @@ theme: /StepByStep
         state: Incorrect
             event: speechNotRecognized
             event: noMatch
-            if: $session.stepByStepCounter > 3
+            if: $session.stepByStepCounter > 2
                 a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                 go!: /Address/Ask
             script: $session.stepByStepCounter++;
