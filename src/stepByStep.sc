@@ -2,11 +2,12 @@ theme: /StepByStep
     
     state: AskCountry
         a: Назовите пожалуйста только страну
+        script: $session.stepByStepCounter = 0;
         
         state: Get
             q: *
             script:
-                $session.stepByStepCounter = 0;
+                # $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.country
@@ -24,20 +25,22 @@ theme: /StepByStep
             state: Incorrect
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCountry"
-                if: $session.stepByStepCounter > 3
+                if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                     go!: /Address/Ask
-                script: $session.stepByStepCounter++;
+                script:
+                    $session.stepByStepCounter += 1;
                 a: Назовите пожалуйста только страну. Как можно более отчётливо
                 go: /StepByStep/AskCountry
 
     state: AskCity
         a: Назовите пожалуйста только город или населённый пункт
+        script: $session.stepByStepCounter = 0;
         
         state: Get
             q: *
             script:
-                $session.stepByStepCounter = 0;
+                # $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.city && $session.dadataResult.cityType
@@ -56,21 +59,23 @@ theme: /StepByStep
             state: Incorrect
                 q: * $no *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCity"
-                if: $session.stepByStepCounter > 3
+                if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                     go!: /Address/Ask
-                script: $session.stepByStepCounter++;
+                script:
+                    $session.stepByStepCounter += 1;
                 a: Назовите пожалуйста только населённый пункт. Как можно более отчётливо
                 go: /StepByStep/AskCity
                 
     state: AskStreet
         a: Назовите пожалуйста только улицу
+        script: $session.stepByStepCounter = 0;
         
         state: Get
             q: $streetName [$streetType]
             q: [$streetType] $streetName
             script:
-                $session.stepByStepCounter = 0;
+                # $session.stepByStepCounter = 0;
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.street && $session.dadataResult.streetType
@@ -102,11 +107,12 @@ theme: /StepByStep
             
     state: AskHouseNumber
         a: Назовите пожалуйста только номер дома
-        
+        script: $session.stepByStepCounter = 0;
+
         state: Get
             q: $customHouse
             script:
-                $session.stepByStepCounter = 0;
+                # $session.stepByStepCounter = 0;
                 $session.house = $request.query.replace(/дом /, "").replace(/номер /, "");
                 addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, $session.house].join(" ")); 
             # a: Номер дома - {{$session.house}}
