@@ -134,3 +134,28 @@ function addLineTable(request, result) {
         headers: {"Content-Type": "application/json"}
         });
 }
+
+function addFullLineTable(request, result, country, city, street, house) {
+    // какая у нас модель asr
+    var sheet2bot = $jsapi.context().injector.sheet2bot;
+    var asr = $jsapi.context().injector.ASRmodel[$jsapi.context().request.botId];
+    // первый пустой ряд в таблице
+    var urlRowNum = sheet2bot.http + "rows?sheet=" + sheet2bot.sheetId + "&range=" + sheet2bot.cellNextRow;
+    var rowNum = Number($http.get(urlRowNum, {headers: {"Content-Type": "application/json"}}).data[0]);
+    // заполняем таблицу
+    var response = $http.post(sheet2bot.http + "update/", {
+        body: {
+            "range": "'Вольный формат'!A",
+            "index": rowNum,
+            "values": [
+                // asr ? asr : "текстовый ввод", // не показываем клиенту
+                // $jsapi.context().client.api, // не показываем клиенту
+                request,
+                result,
+                country, city, street, house
+            ],
+            "sheet": sheet2bot.sheetId
+        },
+        headers: {"Content-Type": "application/json"}
+        });
+}

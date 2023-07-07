@@ -56,7 +56,13 @@ theme: /Address
                 q: * $yes * 
                 script: 
                     // заполнение таблицы
-                    addLineTable($session.firstRequest, $session.dadataResponse.result);
+                    # addLineTable($session.firstRequest, $session.dadataResponse.result);
+                    addFullLineTable($session.firstRequest, $session.dadataResponse.result,
+                    $session.dadataResponse.country,
+                    $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
+                    # $session.dadataRes.streetType + $session.dadataRes.street
+                    $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
+                    "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? $session.dadataRes.houseAdd : ""))
                     delete $session.firstRequest;
                 go!: /Address/Ask
             
