@@ -76,6 +76,7 @@ theme: /
     state: TestRecognition || modal = true
         q!: * {(тест*/тестиров*) распозн*} *
         a: Тестируем распознавание. Говори, а я буду записывать
+        script: $dialer.setNoInputTimeout(10000);
         
         state: Get
             q: *
