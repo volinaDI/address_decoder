@@ -22,6 +22,9 @@ function dadataParseResponse(obj) {
     if (obj.region_type_full == "город") {
         cityType = "город";
         city = obj.region;
+        if (city === "") {
+            
+        }
     } else if (obj.city_type_full) {
         cityType = obj.city_type_full;
         city = obj.city;
@@ -35,8 +38,8 @@ function dadataParseResponse(obj) {
         // "regionType": obj.region_type_full,
         "city": city,
         "cityType": cityType,
-        "street": obj.street,
-        "streetType": obj.street_type_full,
+        "street": city === "Кумертау" && obj.settlement_type_full && obj.settlement_type_full == "сквер" ? obj.settlement : obj.street,
+        "streetType": city === "Кумертау" && obj.settlement_type_full && obj.settlement_type_full == "сквер" ? "сквер" : obj.street_type_full,
         "house": obj.house,
         "houseType": obj.house_type_full,
         "houseAdd": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
@@ -204,7 +207,7 @@ function addFullLineTable(request, result, country, city, street, house) {
 }
 
 function isBauBaksha(text) {
-    var entities = $caila.entitiesLookup("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2", true).entities
+    var entities = $caila.entitiesLookup(text, true).entities
     var res = false;
     entities.forEach(function(entityElem) {
         if (entityElem.entity === "bauBaksha") res = true;

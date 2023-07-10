@@ -16,11 +16,14 @@ theme: /Address
         state: Get
             q: * {[$addressCity/$City] * ($addressStreet * $customHouse)} *
             q: * {($addressCity/$City) * ($addressStreet * [$customHouse])} *
+            q: * {башкортостан * (сквер/худайбер*/худойбер*)} *
             script:
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
-                $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
-                $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана");
+                # $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
+                $session.query = $request.query.replace(/номер /, "");
+                $session.query = chaoticAddressReplace($session.query);
+                # $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана");
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
@@ -32,7 +35,7 @@ theme: /Address
                 a: Произошла техническая ошибка. Нет доступа к базе данных
                 a: Перезвоните пожалуйста.
                 script: $response.replies.push({"type": "hangup"});
-            else: 
+            else:
                 script:
                     $session.dadataRes = dadataParseResponse($session.dadataResponse);
                     // проверка страны на вменяемость
@@ -50,10 +53,10 @@ theme: /Address
                             $session.cityType = "город";
                             $session.country = "Казахстан";
                             if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
-                            $reactions.answer("qu");
                         } else {
                             $temp.yandexRes = parseYandexGeoObject(getResponseYandex($session.query));
                             if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);  
+                            $reactions.answer($temp.yandexComponents);
                             if ($temp.yandexComponents) {
                                 $session.country = $temp.yandexComponents.country;
                                 $session.city = $temp.yandexComponents.city;    
