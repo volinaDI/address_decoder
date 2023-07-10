@@ -53,6 +53,7 @@ theme: /Address
                             $session.cityType = "город";
                             $session.country = "Казахстан";
                             if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
+                            $session.yandexOk = true;
                         } else {
                             $temp.yandexRes = parseYandexGeoObject(getResponseYandex($session.query));
                             if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);

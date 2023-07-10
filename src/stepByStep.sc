@@ -84,9 +84,9 @@ theme: /StepByStep
             if: $session.dadataResult && $session.dadataResult.street && $session.dadataResult.streetType
                 a: {{$session.dadataResult.streetType}} {{$session.dadataResult.street}}, правильно?
             else:
-                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._streetName}}. Правильно?
+                a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{chaoticAddressReplace($parseTree._streetName)}}. Правильно?
                 script:
-                    $session.tryStreet = $parseTree._streetName;
+                    $session.tryStreet = chaoticAddressReplace($parseTree._streetName);
                     $session.tryStreetType = $parseTree._streetType ? $parseTree._streetType.toLowerCase() : "улица";
     
             state: Correct
@@ -109,8 +109,11 @@ theme: /StepByStep
                 go: /StepByStep/AskStreet
             
     state: AskHouseNumber
+        if: $session.house
+            go!: Get
         a: Назовите пожалуйста только номер дома
-        script: $session.stepByStepCounter = 0;
+        script:
+            $session.stepByStepCounter = 0;
 
         state: Get
             q: $customHouse
