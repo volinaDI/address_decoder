@@ -114,8 +114,6 @@ function yandexComponents(geoObject) {
             res.city = component.name
         } else if (component.kind && component.kind === "street") {
             var streetPatterns = $nlp.match(component.name, "/StepByStep/AskStreet/Get");
-            // $reactions.answer(streetPatterns._streetType && true == true);
-            // $reactions.answer(toPrettyString(streetPatterns));
             if (streetPatterns && streetPatterns.parseTree._streetType) {
                 res.street = streetPatterns.parseTree._streetName.replace(streetPatterns.parseTree._streetType, "");
                 res.streetType = streetPatterns.parseTree._streetType;
@@ -199,8 +197,6 @@ function addFullLineTable(request, result, country, city, street, house) {
             "range": "'Вольный формат'!A",
             "index": rowNum,
             "values": [
-                // asr ? asr : "текстовый ввод", // не показываем клиенту
-                // $jsapi.context().client.api, // не показываем клиенту
                 request,
                 result,
                 country, city, street, house

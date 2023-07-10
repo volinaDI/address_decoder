@@ -1,3 +1,4 @@
+theme: /
 require: slotfilling/slotFilling.sc
   module = sys.zb-common
   
@@ -8,16 +9,13 @@ require: address/address.sc
 require: city/city.sc
   module = sys.zb-common
   
-require: chaotic.sc
-require: stepByStep.sc
+require: topics/chaotic.sc
+require: topics/stepByStep.sc
 require: patterns.sc
 
-require: replacesYandex.yaml
-  var = replacesYandex
-  name = replacesYandex
 
-require: functions.js
-require: replacements.js
+require: functions/functions.js
+require: functions/crutchReplace.js
 
 init:
     bind("postProcess", function($context) {
@@ -36,32 +34,7 @@ theme: /
 
     state: NoMatch
         event!: noMatch
-        a: No match. Вы говорите: {{$request.query}}
-
-    state: TMP
-        q!: tmp
-        a: {{capitalize(chaoticAddressReplace("шугалабао бакша серик эстиги"))}}
-        a: текст на замену
-        # a: {{"Нур-суsdfлтан".toLowerCase().replace(replacesYandex.pp, "астана")}}
-        # a: {{toPrettyString($nlp.match("улица 2 тверская ясмская дом 4 корпус 2 строение 1", "/Address/Ask/Get"))}}
-        # a: {{toPrettyString($nlp.match("проспект Рахимжана Кошкарбаева", ))}}
-                # a: {{toPrettyString($nlp.match("проспект Рахимжана Кошкарбаева", ["(~улица|~переулок|~проспект|проект|~проезд|~бульвар|шоссе|микрорайон|~площадь|аллеи|аллея|~съезд|~набережная|~канал|километр|тупик)"]))}}
-
-        state: TMP
-            q: * 
-            # script:
-            #     var ents = $caila.entitiesLookup("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2", true).entities
-            #     return ents.forEach(function(entityElem) {
-            #         if (entityElem.entity) return true;
-            #     });
-                
-            # a: {{toPrettyString(isBauBaksha("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2"))}}
-            go!: /TMP
-
-        state: NoMatch
-            event: noMatch
-            a: это не адрес
-            go!: /TMP
+        a: Простите, я не поняла. Вы говорите: {{$request.query}}
 
     state: Reset
         q!: reset

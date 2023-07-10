@@ -20,10 +20,8 @@ theme: /Address
             script:
                 delete $session.dadataRes;
                 delete $session.addressAnswer;
-                # $session.query = $request.query.replace(/[Лл]итера /, "").replace(/[Лл]итер.?.?/, "").replace(/номер /, "");
                 $session.query = $request.query.replace(/номер /, "");
                 $session.query = chaoticAddressReplace($session.query);
-                # $session.query = $session.query.replace(/[Нн][уо]р[\- ]?султан[^\s]?/, "Астана");
                 $session.firstRequest = $request.query;
                 // если Тинькофф, надо пошаманить с числами
                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($session.query);
@@ -103,18 +101,15 @@ theme: /Address
                 q: * $yes * 
                 script: 
                     // заполнение таблицы
-                    # addLineTable($session.firstRequest, $session.dadataResponse.result);
                     if ($session.yandexOk) {
                         addFullLineTable($session.firstRequest, $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street +  ", дом "+ $session.house,
                         $session.country,
-                    # $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
                         $session.city + " (" + $session.cityType + ")",
                         $session.street + " (" + $session.streetType + ")",
                         "№" + $session.house);
                     } else {
                         addFullLineTable($session.firstRequest, $session.dadataResponse.result,
                         $session.dadataRes.country,
-                    # $session.dadataRes.region + " (" + $session.dadataRes.regionType + ")",
                         $session.dadataRes.city + " (" + $session.dadataRes.cityType + ")",
                         $session.dadataRes.street + " (" + $session.dadataRes.streetType + ")",
                         "№" + $session.dadataRes.house + ($session.dadataRes.houseAdd ? " " + $session.dadataRes.houseAdd : ""))
@@ -193,73 +188,5 @@ theme: /Address
         state: NoMatch
             event: noMatch
             event: speechNotRecognized
-            # script: delete $session.dadataRes;
             a: Это не похоже на адрес, попробуйте ещё раз. Назовите пожалуйста реально существующий адрес - без указания квартиры, этажа и почтового индекса.
             go!: /Address/Ask
-
-        
-        # state: Get
-        #     q: * {[$addressCity] * ($addressStreet * $addressHome)} *
-        #     q: * {$addressCity * ($addressStreet * [$addressHome])} *
-        #     script:
-        #         $session.query = $request.query;
-        #         // если Тинькофф, надо пошаманить с числами
-        #         if ($injector.ASRmodel[$request.botId] === "tinkoff") $session.query = numeralsToNumbers($request.query);
-        #         $temp.apiResponse = getResponseYandex($session.query);
-        #     if: !$temp.apiResponse
-        #         a: Не удалось получить ответ сервиса.
-        #     else:
-        #         script:
-        #             $temp.res = parseYandexRes($temp.apiResponse);
-        #             $analytics.setComment(toPrettyString($temp.apiResponse));
-        #         if: !$temp.res
-        #             a: Не нашлось такого адреса.
-        #             script: addLineTable($request.query, "-");
-        #             if: replaceFromDict($session.query, replacesYandex) != $session.query
-        #                 go!: AddressWithReplace
-        #         elseif: $temp.res[0]
-        #             script: addLineTable($request.query, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-        #             a: {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
-        #             a: Это правильный ответ?
-        #         elseif: $temp.res.GeoObject
-        #             script: addLineTable($request.query, $temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-        #             a: {{$temp.res.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
-        #             a: Это правильный ответ?
-
-            # state: AddressWithReplace
-            #     q: * $no *
-            #     script:
-            #         $temp.newQuery = replaceFromDict($session.query.toLowerCase(), replacesYandex);
-            #         $temp.apiResponse = getResponseYandex($temp.newQuery);
-            #     if: !$temp.apiResponse
-            #         a: Не удалось получить ответ сервиса.
-            #     else:
-            #         script:
-            #             $temp.res = parseYandexRes($temp.apiResponse);
-            #             $analytics.setComment(toPrettyString($temp.apiResponse));
-            #         if: !$temp.res
-            #             a: Не нашлось такого адреса.
-            #             script: addLineTable($session.query, "-");
-            #             go!: /Address/Ask
-            #         else:
-            #             script: addLineTable($temp.newQuery, $temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted);
-            #             a: После замены получилось - {{$temp.res[0].GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted}}
-            #     script: delete $session.query;
-            #     go!: /Address/Ask
-
-
-
-# theme: /Dadata
-    
-#     state: Ask
-#         a: Назовите адрес
-        
-#         state: Get
-#             q: *
-#             script:
-#                 // если Тинькофф, надо пошаманить с числами
-#                 if ($injector.ASRmodel[$request.botId] === "tinkoff") $request.query = numeralsToNumbers($request.query);
-#                 $temp.apiResponse = parseAddressDadata($request.query);
-#             a: {{$temp.apiResponse.result ? $temp.apiResponse.result : "Не нашлось такого адреса."}}
-#             script: addLineTable($request.query, $temp.apiResponse.result ? $temp.apiResponse.result : "-");
-#             go!: /Dadata/Ask
