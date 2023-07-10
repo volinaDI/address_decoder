@@ -1,7 +1,7 @@
 {
   "project" : {
-    "id" : "lt_834-1000025184-pfS",
-    "name" : "lt_834-1000025184-pfS",
+    "id" : "s-1000025184-hHY",
+    "name" : "s-1000025184-hHY",
     "folder" : "/platform"
   },
   "settings" : {
@@ -31,19 +31,21 @@
     "classificationRules" : {
       "refs" : [ ]
     },
-    "patterns" : [ "(~сброс/~сбросить)", "~настройка", "(~улица|~переулок|~проспект|проект|~проезд|~бульвар|шоссе|микрорайон|~площадь|аллеи|аллея|~съезд|~набережная|~канал|километр|тупик)" ],
     "priority" : 0
   }, {
-    "path" : "/Новый интент",
+    "path" : "/привет",
     "enabled" : true,
     "shared" : false,
+    "phrases" : [ {
+      "text" : "привет"
+    } ],
     "classificationRules" : {
       "refs" : [ ]
     },
     "priority" : 0
   } ],
   "entities" : [ ],
-  "enabledSystemEntities" : [ "pymorphy.geox", "duckling.number", "duckling.time", "duckling.duration", "duckling.phone-number", "duckling.email", "duckling.url", "zb.number" ],
+  "enabledSystemEntities" : [ "duckling.number", "duckling.time", "duckling.duration", "duckling.phone-number", "duckling.email", "duckling.url" ],
   "spellerDictionary" : [ ],
   "systemEntities" : [ {
     "name" : "mystem.geo",
@@ -86,7 +88,7 @@
     "enabled" : false
   }, {
     "name" : "pymorphy.geox",
-    "enabled" : true
+    "enabled" : false
   }, {
     "name" : "pymorphy.orgn",
     "enabled" : false
@@ -146,7 +148,7 @@
     "enabled" : false
   }, {
     "name" : "zb.number",
-    "enabled" : true
+    "enabled" : false
   } ],
   "faq" : [ ],
   "skills" : [ ]
