@@ -33,7 +33,6 @@ theme: /
         script: $client.api = "dadata"
         a: Здравствуйте.
         go!: /Address/Ask
-        go!: /TMP
 
     state: NoMatch
         event!: noMatch

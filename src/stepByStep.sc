@@ -78,6 +78,7 @@ theme: /StepByStep
             # q: [$streetType] $streetName
             script:
                 # $session.stepByStepCounter = 0;
+                $request.query = chaoticAddressReplace($request.query);
                 $temp.dadataResponse = parseAddressDadata($request.query + " " + $session.city + " " + $session.cityType);
                 $session.dadataResult = dadataParseResponse($temp.dadataResponse);
             if: $session.dadataResult && $session.dadataResult.street && $session.dadataResult.streetType
