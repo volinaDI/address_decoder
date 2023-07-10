@@ -86,7 +86,7 @@ theme: /StepByStep
                 a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{$parseTree._streetName}}. Правильно?
                 script:
                     $session.tryStreet = $parseTree._streetName;
-                    $session.tryStreetType = $parseTree._streetType.toLowerCase();
+                    $session.tryStreetType = $parseTree._streetType ? $parseTree._streetType.toLowerCase() : "улица";
     
             state: Correct
                 q: * $yes *
@@ -113,8 +113,9 @@ theme: /StepByStep
 
         state: Get
             q: $customHouse
-            script:
-                $session.house = $request.query.toLowerCase().replace(/[Дд]ом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
+            if: !$session.house
+                script:
+                    $session.house = $request.query.toLowerCase().replace(/[Дд]ом /, "").replace(/номер /, "").replace(/курс /, "корпус ");
             a: Полный номер дома - {{$session.house}}. Это правильно?
             
             state: Correct
@@ -128,6 +129,7 @@ theme: /StepByStep
                     $session.city + " (" + $session.cityType + ")",
                     $session.streetType ? $session.street + " (" + $session.streetType.toLowerCase() + ")" : $session.street,
                     "№" + $session.house)
+                    delete $session.house;
                 go!: /Address/Ask
                 
             state: Incorrect
@@ -138,6 +140,8 @@ theme: /StepByStep
                 if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
                     go!: /Address/Ask
-                script: $session.stepByStepCounter++;
+                script:
+                    delete $session.house;
+                    $session.stepByStepCounter++;
                 a: Назовите пожалуйста только полный номер дома. Если у дома есть корпус или строение, назовите их тоже.
                 go: /StepByStep/AskHouseNumber

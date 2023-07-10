@@ -44,7 +44,7 @@
   } ],
   "entities" : [ {
     "entity" : {
-      "name" : "Новая_сущность",
+      "name" : "bauBaksha",
       "enabled" : true,
       "shared" : false,
       "type" : "annotation",
@@ -57,8 +57,8 @@
       "hidden" : false
     },
     "records" : [ {
-      "type" : "synonyms",
-      "rule" : [ ],
+      "type" : "pattern",
+      "rule" : [ "[шугыла] бау-бакша сериктестиги " ],
       "value" : ""
     } ]
   } ],

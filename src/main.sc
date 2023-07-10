@@ -17,6 +17,7 @@ require: replacesYandex.yaml
   name = replacesYandex
 
 require: functions.js
+require: replacements.js
 
 init:
     bind("postProcess", function($context) {
@@ -32,6 +33,7 @@ theme: /
         script: $client.api = "dadata"
         a: Здравствуйте.
         go!: /Address/Ask
+        go!: /TMP
 
     state: NoMatch
         event!: noMatch
@@ -39,13 +41,22 @@ theme: /
 
     state: TMP
         q!: tmp
-        a: {{"Нур-суsdfлтан".toLowerCase().replace(replacesYandex.pp, "астана")}}
-        a: пиши адрес
+        a: текст на замену
+        # a: {{"Нур-суsdfлтан".toLowerCase().replace(replacesYandex.pp, "астана")}}
+        # a: {{toPrettyString($nlp.match("улица 2 тверская ясмская дом 4 корпус 2 строение 1", "/Address/Ask/Get"))}}
+        # a: {{toPrettyString($nlp.match("проспект Рахимжана Кошкарбаева", ))}}
+                # a: {{toPrettyString($nlp.match("проспект Рахимжана Кошкарбаева", ["(~улица|~переулок|~проспект|проект|~проезд|~бульвар|шоссе|микрорайон|~площадь|аллеи|аллея|~съезд|~набережная|~канал|километр|тупик)"]))}}
 
         state: TMP
-            q: * $Address
-            a: это адрес
-            a: {{toPrettyString($parseTree)}}
+            q: * 
+            # script:
+            #     var ents = $caila.entitiesLookup("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2", true).entities
+            #     return ents.forEach(function(entityElem) {
+            #         if (entityElem.entity) return true;
+            #     });
+                
+            # a: {{toPrettyString(isBauBaksha("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2"))}}
+            a: {{chaoticAddressReplace($request.query)}}
             go!: /TMP
 
         state: NoMatch
