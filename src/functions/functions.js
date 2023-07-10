@@ -22,12 +22,12 @@ function dadataParseResponse(obj) {
     if (obj.region_type_full == "город") {
         cityType = "город";
         city = obj.region;
-        if (city === "") {
-            
-        }
     } else if (obj.city_type_full) {
         cityType = obj.city_type_full;
         city = obj.city;
+    } else if (obj.area_type_full) {
+        cityType = obj.area_type_full;
+        city = obj.area;
     } else if (obj.settlement_type_full) {
         cityType = obj.settlement_type_full;
         city = obj.settlement;

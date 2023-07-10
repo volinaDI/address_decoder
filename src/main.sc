@@ -28,7 +28,6 @@ theme: /
     state: Start
         q!: start
         q!: * (привет/сначала/~начало) *
-        script: $client.api = "dadata"
         a: Здравствуйте.
         go!: /Address/Ask
 
@@ -43,7 +42,16 @@ theme: /
             $client = {};
             $session = {};
         a: Сброс настроек выполнен.
+    
+    state: TMP
+        q!: tmp
+        a: address?
         
+        state: TMP
+            q: *
+            a: {{chaoticAddressReplace($request.query)}}
+            go!: /TMP
+
     state: NewSession
         q!: (reset/new) (session/s)
         q!: ns
