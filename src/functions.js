@@ -92,6 +92,11 @@ function parseYandexGeoObject(obj) {
       && obj.GeoObjectCollection.featureMember[0].GeoObject) {
         return obj.GeoObjectCollection.featureMember[0].GeoObject;
     }
+    if (obj && obj.GeoObjectCollection 
+      && obj.GeoObjectCollection.featureMember
+      && obj.GeoObjectCollection.featureMember.GeoObject) {
+        return obj.GeoObjectCollection.featureMember.GeoObject;
+    }
 }
 
 function yandexComponents(geoObject) {

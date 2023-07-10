@@ -55,8 +55,7 @@ theme: /Address
                             if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
                         } else {
                             $temp.yandexRes = parseYandexGeoObject(getResponseYandex($session.query));
-                            if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);  
-                            $reactions.answer($temp.yandexComponents);
+                            if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);
                             if ($temp.yandexComponents) {
                                 $session.country = $temp.yandexComponents.country;
                                 $session.city = $temp.yandexComponents.city;    
@@ -67,18 +66,22 @@ theme: /Address
                             if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
                         }
                     }
-                    // TMP add without house!
+                    // формулируем ответ
+                    $session.addressAnswer = formAddreessToSay($session.dadataRes);
                     if ($session.street && $session.streetType && $session.house) {
-                        $reactions.answer($session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street +  ", дом "+ $session.house + ". Это правильный адрес?");
+                        $session.addressAnswer = $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street +  ", дом "+ $session.house;
                         $session.yandexOk = true;
+                        $temp.dadataOk = false;
+                    } else if ($session.street && $session.streetType && !$session.house) {
+                        $session.addressAnswer = $session.country + ", " + $session.cityType + " " + $session.city + ", " + $session.streetType + " " + $session.street;
+                        $session.yandexOk = true;
+                        $temp.yandexOnlyStreet = true;
                         $temp.dadataOk = false;
                     }
                     if (!$session.dadataRes.street || !$session.dadataRes.house) {
                         $temp.dadataOk = false;
                     }
-                    // формулируем ответ
-                    $session.addressAnswer = formAddreessToSay($session.dadataRes);
-                if: $temp.dadataOk
+                if: $temp.dadataOk || $session.yandexOk
                     a: {{$session.addressAnswer}}. Это правильный адрес?
                 else:
                     if: $temp.incorrectCountry 
@@ -88,7 +91,7 @@ theme: /Address
                         go!: OnlyCountry
                     if: $session.dadataRes.city && !$session.dadataRes.street && !$session.yandexOk
                         go!: OnlyCity
-                    if: $session.dadataRes.city && $session.dadataRes.street && !$session.dadataRes.house && !$session.yandexOk
+                    if: ($session.dadataRes.city && $session.dadataRes.street && !$session.dadataRes.house && !$session.yandexOk) || $temp.yandexOnlyStreet
                         go!: OnlyStreet
                     elseif:!$session.yandexOk 
                         a: Произошла техническая ошибка. Нет доступа к базе данных
