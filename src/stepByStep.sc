@@ -86,7 +86,7 @@ theme: /StepByStep
             else:
                 a: По моим данным в названном вами городе нет такой улицы. Вы сказали - {{$parseTree._streetType}} {{chaoticAddressReplace($parseTree._streetName)}}. Правильно?
                 script:
-                    $session.tryStreet = chaoticAddressReplace($parseTree._streetName);
+                    $session.tryStreet = capitalize(chaoticAddressReplace($parseTree._streetName));
                     $session.tryStreetType = $parseTree._streetType ? $parseTree._streetType.toLowerCase() : "улица";
     
             state: Correct

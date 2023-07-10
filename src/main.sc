@@ -40,6 +40,7 @@ theme: /
 
     state: TMP
         q!: tmp
+        a: {{capitalize(chaoticAddressReplace("шугалабао бакша серик эстиги"))}}
         a: текст на замену
         # a: {{"Нур-суsdfлтан".toLowerCase().replace(replacesYandex.pp, "астана")}}
         # a: {{toPrettyString($nlp.match("улица 2 тверская ясмская дом 4 корпус 2 строение 1", "/Address/Ask/Get"))}}
@@ -55,7 +56,6 @@ theme: /
             #     });
                 
             # a: {{toPrettyString(isBauBaksha("казахстан город кызылорда улица Шугыла Бау-Бакша Сериктестиги дом 2"))}}
-            a: {{chaoticAddressReplace($request.query)}}
             go!: /TMP
 
         state: NoMatch

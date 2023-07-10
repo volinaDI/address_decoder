@@ -218,4 +218,4 @@ function isBauBaksha(text) {
         if (entityElem.entity === "bauBaksha") res = true;
     });
     return res;
-} 
+}
