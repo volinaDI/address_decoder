@@ -32,6 +32,11 @@ function dadataParseResponse(obj) {
         cityType = obj.area_type_full;
         city = obj.area;
     }
+    // костылёчек для микрорайона
+    if ((obj.settlement_type_full == "микрорайон" || obj.settlement_type_full == "район") && obj.area_type_full == "город") {
+        city = obj.area;
+        cityType = "город";
+    }
     var res = {
         "country": obj.country,
         // "region": obj.region,

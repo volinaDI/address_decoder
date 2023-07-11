@@ -80,7 +80,7 @@ theme: /Address
                     if (!$session.dadataRes.street || !$session.dadataRes.house) {
                         $temp.dadataOk = false;
                     }
-                if: $temp.dadataOk || $session.yandexOk
+                if: $temp.dadataOk || ($session.yandexOk && !$temp.yandexOnlyStreet)
                     a: {{$session.addressAnswer}}. Это правильный адрес?
                 else:
                     if: $temp.incorrectCountry 
@@ -170,11 +170,11 @@ theme: /Address
                 state: Correct
                     q: * $yes *
                     script:
-                        $session.country = $session.dadataRes.country;
-                        $session.city = $session.dadataRes.city;
-                        $session.cityType = $session.dadataRes.cityType;
-                        $session.street = $session.dadataRes.street;
-                        $session.streetType = $session.dadataRes.streetType;
+                        $session.country = $session.country ? $session.country : $session.dadataRes.country;
+                        $session.city = $session.city ? $session.city : $session.dadataRes.city;
+                        $session.cityType = $session.cityType ? $session.cityType : $session.dadataRes.cityType;
+                        $session.street = $session.street ? $session.street : $session.dadataRes.street;
+                        $session.streetType = $session.streetType ? $session.streetType : $session.dadataRes.streetType;
                     a: Хорошо, помогите мне пожалуйста записать полный адрес
                     go!: /StepByStep/AskHouseNumber
                     
