@@ -25,12 +25,12 @@ function dadataParseResponse(obj) {
     } else if (obj.city_type_full) {
         cityType = obj.city_type_full;
         city = obj.city;
-    } else if (obj.area_type_full) {
-        cityType = obj.area_type_full;
-        city = obj.area;
     } else if (obj.settlement_type_full) {
         cityType = obj.settlement_type_full;
         city = obj.settlement;
+    } else if (obj.area_type_full) {
+        cityType = obj.area_type_full;
+        city = obj.area;
     }
     var res = {
         "country": obj.country,
@@ -44,8 +44,7 @@ function dadataParseResponse(obj) {
         "houseType": obj.house_type_full,
         "houseAdd": obj.block_type_full ? obj.block_type_full + " " + obj.block : undefined,
         "postalIndex": obj.postal_code
-        
-    }
+    };
     return res;
 }
 
@@ -63,9 +62,7 @@ function formAddreessToSay(addressObj) {
     if (addressObj.houseAdd) res += " " + addressObj.houseAdd;
     
     // if (addressObj.postalIndex) res += " почтовый индекс " + addressObj.postalIndex;
-    
     return res;
-    
 }
 
 // yandex
@@ -73,26 +70,25 @@ function getResponseYandex(text) {
     var params = $jsapi.context().injector.yandex;
     var response = $http.get(params.url
         + "?apikey=" + params.token
-        + "&geocode=" + formatQueryYandex(text) +
-        + "&result=1" +
+        + "&geocode=" + formatQueryYandex(text)
+        + "&result=1"
         + "&&format=json");
     if (response && response.data && response.data.ymaps) return response.data.ymaps;
 }
 
-
 function parseYandexGeoObject(obj) {
-    if (obj && obj.GeoObjectCollection 
+    if (obj && obj.GeoObjectCollection
       && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData
       && obj.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found === 0) {
         return false;
     }
-    if (obj && obj.GeoObjectCollection 
+    if (obj && obj.GeoObjectCollection
       && obj.GeoObjectCollection.featureMember
       && obj.GeoObjectCollection.featureMember[0]
       && obj.GeoObjectCollection.featureMember[0].GeoObject) {
         return obj.GeoObjectCollection.featureMember[0].GeoObject;
     }
-    if (obj && obj.GeoObjectCollection 
+    if (obj && obj.GeoObjectCollection
       && obj.GeoObjectCollection.featureMember
       && obj.GeoObjectCollection.featureMember.GeoObject) {
         return obj.GeoObjectCollection.featureMember.GeoObject;
@@ -117,7 +113,7 @@ function yandexComponents(geoObject) {
             if (streetPatterns && streetPatterns.parseTree._streetType) {
                 res.street = streetPatterns.parseTree._streetName.replace(streetPatterns.parseTree._streetType, "");
                 res.streetType = streetPatterns.parseTree._streetType;
-            } else { 
+            } else {
                 res.street = component.name;
                 res.streetType = "улица";
             }
@@ -153,7 +149,7 @@ function numeralsToNumbers(text) {
     var res = $caila.entitiesLookup(text, true);
     res.entities.forEach(function(elem) {
         if (elem.entity === "zb.number") {
-            text = text.replace(elem.text, parseInt(elem.value))
+            text = text.replace(elem.text, parseInt(elem.value));
         }
     })
     return text.replace("дробь", "/");
@@ -187,7 +183,7 @@ function addLineTable(request, result) {
 function addFullLineTable(request, result, country, city, street, house) {
     // какая у нас модель asr
     var sheet2bot = $jsapi.context().injector.sheet2bot;
-    var asr = $jsapi.context().injector.ASRmodel[$jsapi.context().request.botId];
+    // var asr = $jsapi.context().injector.ASRmodel[$jsapi.context().request.botId];
     // первый пустой ряд в таблице
     var urlRowNum = sheet2bot.http + "rows?sheet=" + sheet2bot.sheetId + "&range=" + sheet2bot.cellNextRow;
     var rowNum = Number($http.get(urlRowNum, {headers: {"Content-Type": "application/json"}}).data[0]);
@@ -208,7 +204,7 @@ function addFullLineTable(request, result, country, city, street, house) {
 }
 
 function isBauBaksha(text) {
-    var entities = $caila.entitiesLookup(text, true).entities
+    var entities = $caila.entitiesLookup(text, true).entities;
     var res = false;
     entities.forEach(function(entityElem) {
         if (entityElem.entity === "bauBaksha") res = true;
