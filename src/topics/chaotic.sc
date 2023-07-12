@@ -37,7 +37,7 @@ theme: /Address
                 script:
                     $session.dadataRes = dadataParseResponse($session.dadataResponse);
                     // проверка страны на вменяемость
-                    if (["Казахстан", "Россия", "Беларусь", "Армения", "Молдова, Республика"].indexOf($session.dadataRes.country) === -1) {
+                    if (["Казахстан", "Россия", "Беларусь", "Армения", "Молдова, Республика", "Украина"].indexOf($session.dadataRes.country) === -1) {
                         $temp.dadataOk = false;
                         $temp.incorrectCountry = true;
                     }
