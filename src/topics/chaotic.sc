@@ -42,7 +42,7 @@ theme: /Address
                         $temp.incorrectCountry = true;
                     }
                     // если Казахстан, используем яндекс
-                    if ($session.dadataRes.country === "Казахстан") {
+                    if ($session.dadataRes.country === "Казахстан" || $session.dadataRes.country === "Беларусь") {
                         // костыль улица Шугыла Бау-Бакша Сериктестиги
                         if (isBauBaksha($session.query)) {
                             $session.street = "Шугыла Бау-Бакша Сериктестиги";
@@ -53,6 +53,7 @@ theme: /Address
                             if ($parseTree._customHouse) $session.house = $parseTree._customHouse.replace(/[Дд]ом /, "").replace(/номер /, "");
                             $session.yandexOk = true;
                         } else {
+                            // $reactions.answer(toPrettyString($temp.yandexRes));
                             $temp.yandexRes = parseYandexGeoObject(getResponseYandex($session.query));
                             if ($temp.yandexRes) $temp.yandexComponents = yandexComponents($temp.yandexRes);
                             if ($temp.yandexComponents) {

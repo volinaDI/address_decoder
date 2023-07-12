@@ -78,7 +78,9 @@ function getResponseYandex(text) {
         + "&geocode=" + formatQueryYandex(text)
         + "&result=1"
         + "&&format=json");
+    if (response && response.data && response.data.response) return response.data.response;
     if (response && response.data && response.data.ymaps) return response.data.ymaps;
+
 }
 
 function parseYandexGeoObject(obj) {
@@ -101,14 +103,20 @@ function parseYandexGeoObject(obj) {
 }
 
 function yandexComponents(geoObject) {
+    
     if (geoObject && geoObject.metaDataProperty
       && geoObject.metaDataProperty.GeocoderMetaData
       && geoObject.metaDataProperty.GeocoderMetaData.Address
       && geoObject.metaDataProperty.GeocoderMetaData.Address.Component) {
         var addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Component;
-    }
-    if (addressComponents[0].kind === "country" && addressComponents[0].name !== "Казахстан") return false;
-    var res = {country: "Казахстан"};
+    } else if (geoObject && geoObject.metaDataProperty
+      && geoObject.metaDataProperty.GeocoderMetaData
+      && geoObject.metaDataProperty.GeocoderMetaData.Address
+      && geoObject.metaDataProperty.GeocoderMetaData.Address.Components) {
+        var addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Components;
+      }
+    if (addressComponents && addressComponents[0] && addressComponents[0].kind === "country" && addressComponents[0].name !== "Казахстан" && addressComponents[0].name !== "Беларусь" && addressComponents[0].name !== "Украина") return false;
+    var res = {country: addressComponents[0].name};
     addressComponents.forEach(function(component) {
         if (component.kind && component.kind === "locality") {
             res.cityType = "город",
