@@ -14,7 +14,7 @@ theme: /Address
             delete $session.addressAnswer;
         
         state: Get
-            q: * {[$addressCity/$City] * ($addressStreet * $customHouse)} *
+            q: * {[$addressCity/$City] * ([$streetType] $streetName [$streetType] * $customHouse)} *
             q: * {($addressCity/$City) * ($addressStreet * [$customHouse])} *
             q: * {башкортостан * (сквер/худайбер*/худойбер*)} *
             script:
