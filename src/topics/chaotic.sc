@@ -42,7 +42,7 @@ theme: /Address
                         $temp.incorrectCountry = true;
                     }
                     // если Казахстан, используем яндекс
-                    if ($session.dadataRes.country === "Казахстан") {
+                    if ($session.dadataRes.country === "Казахстан" || $session.dadataRes.country === "Беларусь") {
                         // костыль улица Шугыла Бау-Бакша Сериктестиги
                         if (isBauBaksha($session.query)) {
                             $session.street = "Шугыла Бау-Бакша Сериктестиги";
