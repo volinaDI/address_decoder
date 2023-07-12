@@ -16,14 +16,14 @@ theme: /StepByStep
                 go!: Incorrect
                 
             state: Correct
-                q: * $yes *
+                q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                 script:
                     $session.country = $session.dadataResult.country;
                     delete $session.dadataResult;
                 go!: /StepByStep/AskCity
             
             state: Incorrect
-                q: * $no *
+                q: * ($no/$incorrect/не * поняла/что нет) *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCountry"
                 if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
@@ -49,7 +49,7 @@ theme: /StepByStep
                 go!: Incorrect
             
             state: Correct
-                q: * $yes *
+                q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                 script:
                     $session.city = $session.dadataResult.city;
                     $session.cityType = $session.dadataResult.cityType;
@@ -59,7 +59,7 @@ theme: /StepByStep
                 go!: /StepByStep/AskStreet
 
             state: Incorrect
-                q: * $no *
+                q: * ($no/$incorrect/не * поняла/что нет) *
                 event: speechNotRecognized || fromState = "/StepByStep/AskCity"
                 if: $session.stepByStepCounter > 2
                     a: К сожалению не удалось распознать этот адрес. Попробуем ещё раз?
@@ -90,7 +90,7 @@ theme: /StepByStep
                     $session.tryStreetType = $parseTree._streetType ? $parseTree._streetType.toLowerCase() : "улица";
     
             state: Correct
-                q: * $yes *
+                q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                 script:
                     $session.street = $session.dadataResult.street ? $session.dadataResult.street : $session.tryStreet ;
                     $session.streetType = $session.dadataResult.streetType ? $session.dadataResult.streetType : $session.tryStreetType.toLowerCase();
@@ -98,7 +98,7 @@ theme: /StepByStep
                 go!: /StepByStep/AskHouseNumber
 
             state: Incorrect
-                q: * $no *
+                q: * ($no/$incorrect/не * поняла/что нет) *
                 event: speechNotRecognized || fromState = "/StepByStep/AskStreet"
                 event: noMatch || fromState = "/StepByStep/AskStreet"
                 if: $session.stepByStepCounter > 2
@@ -123,7 +123,7 @@ theme: /StepByStep
             a: Полный номер дома - {{$session.house}}. Это правильно?
             
             state: Correct
-                q: * $yes *
+                q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                 a: Итак, полный адрес {{$session.country}},  {{$session.cityType}} {{$session.city}}, {{$session.streetType}} {{$session.street}}, дом {{$session.house}}
                 script:
                     # addLineTable($session.firstRequest, [$session.country, $session.cityType, $session.city, $session.streetType, $session.street, "дом", $session.house].join(" "));

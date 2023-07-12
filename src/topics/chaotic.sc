@@ -99,7 +99,7 @@ theme: /Address
                         script: $response.replies.push({"type": "hangup"});
 
             state: Yes
-                q: * $yes * 
+                q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) * 
                 script: 
                     // заполнение таблицы
                     if ($session.yandexOk) {
@@ -119,7 +119,7 @@ theme: /Address
                 go!: /Address/Ask
             
             state: No
-                q: * $no *
+                q: * ($no/$incorrect/не * поняла/что нет) *
                 a: Очень жаль. Давайте я попробую записать адрес по частям.
                 go!: /StepByStep/AskCountry
                 
@@ -133,7 +133,7 @@ theme: /Address
                 a: Я поняла только часть адреса. Страна {{$session.addressAnswer}} - это правильно?
                 
                 state: Correct
-                    q: * $yes *
+                    q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                     script:
                         $session.country = $session.dadataRes.country;
                     a: Хорошо, помогите мне пожалуйста записать полный адрес
@@ -150,7 +150,7 @@ theme: /Address
                 a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
                 
                 state: Correct
-                    q: * $yes *
+                    q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                     script:
                         $session.country = $session.dadataRes.country;
                         $session.city = $session.dadataRes.city;
@@ -169,7 +169,7 @@ theme: /Address
                 a: Я поняла только часть адреса. {{$session.addressAnswer}} - это правильно?
                 
                 state: Correct
-                    q: * $yes *
+                    q: * ($yes $weight<+0.2>/[не $weight<-1.0>] ($correct/все так)) *
                     script:
                         $session.country = $session.country ? $session.country : $session.dadataRes.country;
                         $session.city = $session.city ? $session.city : $session.dadataRes.city;
