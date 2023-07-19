@@ -80,7 +80,6 @@ function getResponseYandex(text) {
         + "&&format=json");
     if (response && response.data && response.data.response) return response.data.response;
     if (response && response.data && response.data.ymaps) return response.data.ymaps;
-
 }
 
 function parseYandexGeoObject(obj) {
@@ -103,17 +102,17 @@ function parseYandexGeoObject(obj) {
 }
 
 function yandexComponents(geoObject) {
-    
+    var addressComponents;
     if (geoObject && geoObject.metaDataProperty
       && geoObject.metaDataProperty.GeocoderMetaData
       && geoObject.metaDataProperty.GeocoderMetaData.Address
       && geoObject.metaDataProperty.GeocoderMetaData.Address.Component) {
-        var addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Component;
+        addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Component;
     } else if (geoObject && geoObject.metaDataProperty
       && geoObject.metaDataProperty.GeocoderMetaData
       && geoObject.metaDataProperty.GeocoderMetaData.Address
       && geoObject.metaDataProperty.GeocoderMetaData.Address.Components) {
-        var addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Components;
+        addressComponents = geoObject.metaDataProperty.GeocoderMetaData.Address.Components;
       }
     if (addressComponents && addressComponents[0] && addressComponents[0].kind === "country" && addressComponents[0].name !== "Казахстан" && addressComponents[0].name !== "Беларусь" && addressComponents[0].name !== "Украина") return false;
     var res = {country: addressComponents[0].name};
