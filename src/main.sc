@@ -49,7 +49,10 @@ theme: /
         
         state: TMP
             q: *
-            a: {{chaoticAddressReplace($request.query)}}
+            script:
+                var res = new RegExp('234..');
+                $reactions.answer('2346699999'.replace(res, '1'));
+            # a: {{toPrettySting()}}
             go!: /TMP
 
     state: NewSession
